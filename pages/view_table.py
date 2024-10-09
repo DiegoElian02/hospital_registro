@@ -2,17 +2,72 @@
 import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
+import os
 
 def show_table_page():
     st.title("Tabla de Pacientes")
 
-    # Botón para volver a la página de registro
-    if st.button("Registrar Paciente"):
-        st.session_state.page = 'Registrar Paciente'
-        st.rerun()
+    # Inicializar variables de estado para confirmaciones
+    if 'confirm_delete' not in st.session_state:
+        st.session_state.confirm_delete = False
+
+    if 'confirm_reset' not in st.session_state:
+        st.session_state.confirm_reset = False
+
+    # Botones para acciones
+    action_cols = st.columns([1, 1, 2])
+    with action_cols[0]:
+        if st.button("Registrar Paciente"):
+            st.session_state.page = 'Registrar Paciente'
+            st.rerun()
+
+    with action_cols[1]:
+        if st.session_state.confirm_delete:
+            st.error("¿Estás seguro de que deseas eliminar el registro seleccionado?")
+            confirm_delete_cols = st.columns([1, 1])
+            with confirm_delete_cols[0]:
+                if st.button("Sí, eliminar"):
+                    delete_selected_record(st.session_state.selected_patient_full)
+                    st.success("Registro eliminado exitosamente.")
+                    st.session_state.confirm_delete = False
+                    st.rerun()
+            with confirm_delete_cols[1]:
+                if st.button("Cancelar"):
+                    st.session_state.confirm_delete = False
+        else:
+            if st.button("Eliminar Registro Seleccionado"):
+                if 'selected_patient_full' in st.session_state:
+                    st.session_state.confirm_delete = True
+                else:
+                    st.warning("Por favor, selecciona un paciente para eliminar.")
+
+    with action_cols[2]:
+        if st.session_state.confirm_reset:
+            st.error("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")
+            confirm_reset_cols = st.columns([1, 1])
+            with confirm_reset_cols[0]:
+                if st.button("Sí, resetear"):
+                    reset_database()
+                    st.success("Base de datos reseteada exitosamente.")
+                    st.session_state.confirm_reset = False
+                    st.rerun()
+            with confirm_reset_cols[1]:
+                if st.button("Cancelar"):
+                    st.session_state.confirm_reset = False
+        else:
+            if st.button("Resetear Base de Datos"):
+                st.session_state.confirm_reset = True
 
     # Leer el DataFrame
-    df = pd.read_csv("data/patients.csv")
+    if os.path.exists("data/patients.csv"):
+        df = pd.read_csv("data/patients.csv")
+    else:
+        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
+        return
+
+    if df.empty:
+        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
+        return
 
     # Filtros
     nombre_filter = st.text_input("Filtrar por Nombre")
@@ -59,11 +114,14 @@ def show_table_page():
     with col2:
         # Verificar si hay filas seleccionadas
         if not selected_rows.empty:
-            # Obtener el identificador único del paciente seleccionado (por ejemplo, 'Número de Expediente')
+            # Obtener el identificador único del paciente seleccionado
             paciente_id = selected_rows.iloc[0]['Número de Expediente']
 
             # Buscar el registro completo del paciente en el DataFrame original
             selected_patient_full = df[df['Número de Expediente'] == paciente_id].iloc[0]
+
+            # Guardar en session_state para usar en la eliminación
+            st.session_state.selected_patient_full = selected_patient_full
 
             st.subheader(f"Detalles de {selected_patient_full['Paciente']}")
 
@@ -72,3 +130,44 @@ def show_table_page():
                 st.write(f"**{key}:** {value}")
         else:
             st.subheader("Seleccione un paciente para ver los detalles")
+            if 'selected_patient_full' in st.session_state:
+                del st.session_state.selected_patient_full
+
+def delete_selected_record(selected_patient):
+    # Leer el DataFrame original
+    df = pd.read_csv("data/patients.csv")
+
+    # Eliminar el registro del paciente seleccionado
+    df = df[df['Número de Expediente'] != selected_patient['Número de Expediente']]
+
+    # Guardar el DataFrame actualizado
+    df.to_csv("data/patients.csv", index=False)
+
+def reset_database():
+    # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias
+    file_path = "data/patients.csv"
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    # Crear un nuevo DataFrame vacío con las columnas definidas
+    columns = [
+        'Paciente',
+        'Fecha de Nacimiento',
+        'Número de Expediente',
+        'Sexo',
+        'Episodio',
+        'Ubicación',
+        'Efectuado',
+        'Dictado',
+        'Número de Acceso',
+        'Médico Solicitante',
+        'Fecha y Hora del Estudio',
+        'Procedimiento',
+        'Motivo del Estudio',
+        'Comparación',
+        'Técnica',
+        'Hallazgos',
+        'Impresión Diagnóstica'
+    ]
+    df_empty = pd.DataFrame(columns=columns)
+    df_empty.to_csv(file_path, index=False)
