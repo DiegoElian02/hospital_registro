@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import datetime
 
 def show_register_page(user_role):
     st.title("Registrar Paciente")
@@ -17,11 +18,13 @@ def show_register_page(user_role):
 
     # Dividir la página en dos columnas para evitar que sea muy larga
     col1, col2 = st.columns(2)
-
+    fecha_min = datetime.date(1900, 1, 1)  # Fecha mínima permitida
+    fecha_max = datetime.date.today()       # Fecha máxima permitida (hoy)
     with col1:
         st.subheader("Información del Paciente")
         nombre = st.text_input("Paciente")
-        fecha_nacimiento = st.date_input("Fecha de Nacimiento")
+
+        fecha_nacimiento = st.date_input("Fecha de Nacimiento", value=datetime.date(2000, 1, 1), min_value=fecha_min, max_value=fecha_max)
         numero_expediente = st.text_input("Número de Expediente")
         sexo = st.selectbox("Sexo", ["Masculino", "Femenino", "Otro"])
         episodio = st.text_input("Episodio")
