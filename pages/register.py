@@ -1,8 +1,8 @@
-# pages\register.py
 import streamlit as st
 import pandas as pd
 import os
 import datetime
+from src.authentication import authenticate_user  # Asegúrate de tener esta función
 
 def show_register_page(user_role):
     st.title("Registrar Paciente")
@@ -16,68 +16,121 @@ def show_register_page(user_role):
             st.session_state.page = 'Registrar Paciente'
             st.rerun()
 
-    # Dividir la página en dos columnas para evitar que sea muy larga
+    # Reorganizamos la interfaz: Datos de identificación primero
+    st.subheader("Datos de Identificación Personal")
     col1, col2 = st.columns(2)
-    fecha_min = datetime.date(1900, 1, 1)  # Fecha mínima permitida
-    fecha_max = datetime.date.today()       # Fecha máxima permitida (hoy)
+    
     with col1:
-        st.subheader("Información del Paciente")
-        nombre = st.text_input("Paciente")
+        nombre = st.text_input("Nombre(s)*", max_chars=50)
+        primer_apellido = st.text_input("Primer Apellido*", max_chars=50)
+        segundo_apellido = st.text_input("Segundo Apellido", max_chars=50)  # Opcional
+        curp = st.text_input("CURP*", max_chars=18)
+        if len(curp) != 18:
+            st.error("CURP debe tener 18 caracteres.")
 
-        fecha_nacimiento = st.date_input("Fecha de Nacimiento", value=datetime.date(2000, 1, 1), min_value=fecha_min, max_value=fecha_max)
+        fecha_min = datetime.date(1900, 1, 1)
+        fecha_max = datetime.date.today()
+        fecha_nacimiento = st.date_input("Fecha de Nacimiento*", value=datetime.date(2000, 1, 1), min_value=fecha_min, max_value=fecha_max)
+
+    with col2:
+        sexo = st.selectbox("Sexo*", ["Masculino", "Femenino", "Otro"])
+        entidad_federativa = st.text_input("Entidad Federativa*")  # Estado de residencia
+        domicilio = st.text_input("Domicilio*", max_chars=100)
+        telefono = st.text_input("Teléfono (Opcional)", max_chars=15)
+
+    # Validación de campos obligatorios
+    if not nombre or not primer_apellido or not curp or not entidad_federativa or not domicilio:
+        st.error("Por favor, completa todos los campos obligatorios marcados con *.")
+
+    st.subheader("Información Clínica")
+    col3, col4 = st.columns(2)
+    with col3:
         numero_expediente = st.text_input("Número de Expediente")
-        sexo = st.selectbox("Sexo", ["Masculino", "Femenino", "Otro"])
+        medico_solicitante = st.text_input("Médico Solicitante")
         episodio = st.text_input("Episodio")
         ubicacion = st.text_input("Ubicación")
 
-        st.subheader("Procedimiento")
+    with col4:
+        fecha_hora = st.date_input("Fecha y Hora del Estudio")
         procedimiento = st.text_area("Procedimiento")
         motivo_estudio = st.text_area("Motivo del Estudio")
         comparacion = st.text_area("Comparación")
         tecnica = st.text_area("Técnica")
 
-    with col2:
-        st.subheader("Detalles Adicionales")
+    st.subheader("Resultados del Estudio")
+    col5, col6 = st.columns(2)
+    with col5:
         efectuado = st.text_input("Efectuado")
         dictado = st.text_input("Dictado")
         num_acceso = st.text_input("Número de Acceso")
-        medico_solicitante = st.text_input("Médico Solicitante")
-        fecha_hora = st.date_input("Fecha y Hora")
-
-        st.subheader("Resultados")
+    with col6:
         hallazgos = st.text_area("Hallazgos")
         impresion_diagnostica = st.text_area("Impresión Diagnóstica")
 
-        # Botón para registrar el paciente
-        if st.button("Registrar"):
-            new_patient = {
-                'Paciente': nombre,
-                'Fecha de Nacimiento': fecha_nacimiento,
-                'Número de Expediente': numero_expediente,
-                'Sexo': sexo,
-                'Episodio': episodio,
-                'Ubicación': ubicacion,
-                'Efectuado': efectuado,
-                'Dictado': dictado,
-                'Número de Acceso': num_acceso,
-                'Médico Solicitante': medico_solicitante,
-                'Fecha y Hora': fecha_hora,
-                'Procedimiento': procedimiento,
-                'Motivo del Estudio': motivo_estudio,
-                'Comparación': comparacion,
-                'Técnica': tecnica,
-                'Hallazgos': hallazgos,
-                'Impresión Diagnóstica': impresion_diagnostica
-            }
-            save_patient(new_patient)
+    # Solo mostramos la barra de contraseña si es admin y se va a registrar el paciente
+    if user_role == 'admin':
+        st.subheader("Reautenticación Administrador")
+        password = st.text_input("Ingresa tu contraseña nuevamente", type="password")
+
+    # Botón para registrar el paciente
+    if st.button("Registrar"):
+        # Validación de campos obligatorios
+        if not nombre or not primer_apellido or len(curp) != 18:
+            st.error("Por favor, completa correctamente los campos obligatorios.")
+        else:
+            # Si es administrador, pedimos y verificamos la contraseña
+            if user_role == 'admin':
+                if not password:
+                    st.error("Por favor, ingresa tu contraseña para continuar.")
+                    return
+                user = authenticate_user('admin', password)
+                if not user:
+                    st.error("Contraseña incorrecta")
+                    return
+
+            # Registro de paciente después de validación
+            registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
+                               entidad_federativa, domicilio, telefono, numero_expediente, medico_solicitante, 
+                               episodio, ubicacion, fecha_hora, procedimiento, motivo_estudio, comparacion, 
+                               tecnica, efectuado, dictado, num_acceso, hallazgos, impresion_diagnostica)
             st.success("Paciente registrado exitosamente")
-            
-        st.image("images/logo.png", use_column_width=True)
 
     if user_role == 'admin':
         if st.button("Ver Tabla de Pacientes"):
             st.session_state.page = 'Ver Tabla'
             st.rerun()
+
+def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
+                       entidad_federativa, domicilio, telefono, numero_expediente, medico_solicitante, 
+                       episodio, ubicacion, fecha_hora, procedimiento, motivo_estudio, comparacion, 
+                       tecnica, efectuado, dictado, num_acceso, hallazgos, impresion_diagnostica):
+    
+    new_patient = {
+        'Nombre': nombre,
+        'Primer Apellido': primer_apellido,
+        'Segundo Apellido': segundo_apellido,
+        'CURP': curp,
+        'Fecha de Nacimiento': fecha_nacimiento,
+        'Sexo': sexo,
+        'Entidad Federativa': entidad_federativa,
+        'Domicilio': domicilio,
+        'Teléfono': telefono,
+        'Número de Expediente': numero_expediente,
+        'Médico Solicitante': medico_solicitante,
+        'Episodio': episodio,
+        'Ubicación': ubicacion,
+        'Fecha y Hora': fecha_hora,
+        'Procedimiento': procedimiento,
+        'Motivo del Estudio': motivo_estudio,
+        'Comparación': comparacion,
+        'Técnica': tecnica,
+        'Efectuado': efectuado,
+        'Dictado': dictado,
+        'Número de Acceso': num_acceso,
+        'Hallazgos': hallazgos,
+        'Impresión Diagnóstica': impresion_diagnostica
+    }
+    save_patient(new_patient)
 
 def save_patient(patient_data):
     file_path = "data/patients.csv"
@@ -86,21 +139,27 @@ def save_patient(patient_data):
     else:
         # Definir las columnas si el archivo no existe
         df = pd.DataFrame(columns=[
-            'Paciente',
+            'Nombre',
+            'Primer Apellido',
+            'Segundo Apellido',
+            'CURP',
             'Fecha de Nacimiento',
-            'Número de Expediente',
             'Sexo',
+            'Entidad Federativa',
+            'Domicilio',
+            'Teléfono',
+            'Número de Expediente',
+            'Médico Solicitante',
             'Episodio',
             'Ubicación',
-            'Efectuado',
-            'Dictado',
-            'Número de Acceso',
-            'Médico Solicitante',
             'Fecha y Hora',
             'Procedimiento',
             'Motivo del Estudio',
             'Comparación',
             'Técnica',
+            'Efectuado',
+            'Dictado',
+            'Número de Acceso',
             'Hallazgos',
             'Impresión Diagnóstica'
         ])

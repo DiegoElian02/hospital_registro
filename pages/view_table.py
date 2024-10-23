@@ -1,4 +1,3 @@
-# pages\view_table.py
 import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
@@ -69,6 +68,9 @@ def show_table_page():
         st.warning("La base de datos está vacía. Registra nuevos pacientes.")
         return
 
+    # Concatenar Nombre y Apellidos en el campo "Paciente"
+    df['Paciente'] = df['Nombre'] + " " + df['Primer Apellido'] + " " + df['Segundo Apellido']
+
     # Filtros
     nombre_filter = st.text_input("Filtrar por Nombre")
     sexo_filter = st.multiselect("Filtrar por Sexo", options=df['Sexo'].unique())
@@ -125,9 +127,15 @@ def show_table_page():
 
             st.subheader(f"Detalles de {selected_patient_full['Paciente']}")
 
-            # Mostrar los detalles del paciente
-            for key, value in selected_patient_full.items():
-                st.write(f"**{key}:** {value}")
+            # Mostrar los detalles del paciente, incluyendo los campos faltantes
+            campos = [
+                'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo', 
+                'Entidad Federativa', 'Domicilio', 'Teléfono', 'Número de Expediente', 'Médico Solicitante', 
+                'Episodio', 'Ubicación', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparación', 
+                'Técnica', 'Efectuado', 'Dictado', 'Número de Acceso', 'Hallazgos', 'Impresión Diagnóstica'
+            ]
+            for campo in campos:
+                st.write(f"**{campo}:** {selected_patient_full[campo]}")
         else:
             st.subheader("Seleccione un paciente para ver los detalles")
             if 'selected_patient_full' in st.session_state:
@@ -151,21 +159,27 @@ def reset_database():
 
     # Crear un nuevo DataFrame vacío con las columnas definidas
     columns = [
-        'Paciente',
+        'Nombre',
+        'Primer Apellido',
+        'Segundo Apellido',
+        'CURP',
         'Fecha de Nacimiento',
-        'Número de Expediente',
         'Sexo',
+        'Entidad Federativa',
+        'Domicilio',
+        'Teléfono',
+        'Número de Expediente',
+        'Médico Solicitante',
         'Episodio',
         'Ubicación',
-        'Efectuado',
-        'Dictado',
-        'Número de Acceso',
-        'Médico Solicitante',
-        'Fecha y Hora del Estudio',
+        'Fecha y Hora',
         'Procedimiento',
         'Motivo del Estudio',
         'Comparación',
         'Técnica',
+        'Efectuado',
+        'Dictado',
+        'Número de Acceso',
         'Hallazgos',
         'Impresión Diagnóstica'
     ]
