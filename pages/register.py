@@ -7,17 +7,17 @@ from src.authentication import authenticate_user  # Asegúrate de tener esta fun
 def show_register_page(user_role):
     st.title("Registrar Paciente")
 
-    # Crear columnas para posicionar el botón en la derecha
+    # Crear columnas para posicionar el boton en la derecha
     header_cols = st.columns([8, 1])
     with header_cols[1]:
-        if st.button("Cerrar Sesión"):
+        if st.button("Cerrar Sesion"):
             st.session_state.authenticated = False
             st.session_state.user_role = None
             st.session_state.page = 'Registrar Paciente'
             st.rerun()
 
-    # Reorganizamos la interfaz: Datos de identificación primero
-    st.subheader("Datos de Identificación Personal")
+    # Reorganizamos la interfaz: Datos de identificacion primero
+    st.subheader("Datos de Identificacion Personal")
     col1, col2 = st.columns(2)
     
     with col1:
@@ -27,54 +27,54 @@ def show_register_page(user_role):
         curp = st.text_input("CURP*", max_chars=18)
         if len(curp) != 18:
             st.error("CURP debe tener 18 caracteres.")
-
         fecha_min = datetime.date(1900, 1, 1)
         fecha_max = datetime.date.today()
         fecha_nacimiento = st.date_input("Fecha de Nacimiento*", value=datetime.date(2000, 1, 1), min_value=fecha_min, max_value=fecha_max)
-
+    
     with col2:
         sexo = st.selectbox("Sexo*", ["Masculino", "Femenino", "Otro"])
         entidad_federativa = st.text_input("Entidad Federativa*")  # Estado de residencia
         domicilio = st.text_input("Domicilio*", max_chars=100)
-        telefono = st.text_input("Teléfono (Opcional)", max_chars=15)
+        telefono = st.text_input("Telefono (Opcional)", max_chars=15)
+        religion = st.text_input("Religion")  # Nuevo campo de Religion
 
-    # Validación de campos obligatorios
+    # Validacion de campos obligatorios
     if not nombre or not primer_apellido or not curp or not entidad_federativa or not domicilio:
         st.error("Por favor, completa todos los campos obligatorios marcados con *.")
 
-    st.subheader("Información Clínica")
+    st.subheader("Informacion Clinica")
     col3, col4 = st.columns(2)
     with col3:
-        numero_expediente = st.text_input("Número de Expediente")
-        medico_solicitante = st.text_input("Médico Solicitante")
+        numero_expediente = st.text_input("Numero de Expediente")
+        medico_solicitante = st.text_input("Medico Solicitante")
         episodio = st.text_input("Episodio")
-        ubicacion = st.text_input("Ubicación")
-
+        ubicacion = st.text_input("Ubicacion")
+    
     with col4:
         fecha_hora = st.date_input("Fecha y Hora del Estudio")
         procedimiento = st.text_area("Procedimiento")
         motivo_estudio = st.text_area("Motivo del Estudio")
-        comparacion = st.text_area("Comparación")
-        tecnica = st.text_area("Técnica")
+        comparacion = st.text_area("Comparacion")
+        tecnica = st.text_area("Tecnica")
 
     st.subheader("Resultados del Estudio")
     col5, col6 = st.columns(2)
     with col5:
         efectuado = st.text_input("Efectuado")
         dictado = st.text_input("Dictado")
-        num_acceso = st.text_input("Número de Acceso")
+        num_acceso = st.text_input("Numero de Acceso")
     with col6:
         hallazgos = st.text_area("Hallazgos")
-        impresion_diagnostica = st.text_area("Impresión Diagnóstica")
+        impresion_diagnostica = st.text_area("Impresion Diagnostica")
 
     # Solo mostramos la barra de contraseña si es admin y se va a registrar el paciente
     if user_role == 'admin':
-        st.subheader("Reautenticación Administrador")
+        st.subheader("Reautenticacion Administrador")
         password = st.text_input("Ingresa tu contraseña nuevamente", type="password")
 
-    # Botón para registrar el paciente
+    # Boton para registrar el paciente
     if st.button("Registrar"):
-        # Validación de campos obligatorios
+        # Validacion de campos obligatorios
         if not nombre or not primer_apellido or len(curp) != 18:
             st.error("Por favor, completa correctamente los campos obligatorios.")
         else:
@@ -88,11 +88,12 @@ def show_register_page(user_role):
                     st.error("Contraseña incorrecta")
                     return
 
-            # Registro de paciente después de validación
+            # Registro de paciente despues de validacion
             registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
-                               entidad_federativa, domicilio, telefono, numero_expediente, medico_solicitante, 
-                               episodio, ubicacion, fecha_hora, procedimiento, motivo_estudio, comparacion, 
-                               tecnica, efectuado, dictado, num_acceso, hallazgos, impresion_diagnostica)
+                               entidad_federativa, domicilio, telefono, religion, numero_expediente, 
+                               medico_solicitante, episodio, ubicacion, fecha_hora, procedimiento, 
+                               motivo_estudio, comparacion, tecnica, efectuado, dictado, num_acceso, 
+                               hallazgos, impresion_diagnostica)
             st.success("Paciente registrado exitosamente")
 
     if user_role == 'admin':
@@ -101,9 +102,10 @@ def show_register_page(user_role):
             st.rerun()
 
 def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
-                       entidad_federativa, domicilio, telefono, numero_expediente, medico_solicitante, 
-                       episodio, ubicacion, fecha_hora, procedimiento, motivo_estudio, comparacion, 
-                       tecnica, efectuado, dictado, num_acceso, hallazgos, impresion_diagnostica):
+                       entidad_federativa, domicilio, telefono, religion, numero_expediente, 
+                       medico_solicitante, episodio, ubicacion, fecha_hora, procedimiento, 
+                       motivo_estudio, comparacion, tecnica, efectuado, dictado, num_acceso, 
+                       hallazgos, impresion_diagnostica):
     
     new_patient = {
         'Nombre': nombre,
@@ -114,21 +116,22 @@ def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_na
         'Sexo': sexo,
         'Entidad Federativa': entidad_federativa,
         'Domicilio': domicilio,
-        'Teléfono': telefono,
-        'Número de Expediente': numero_expediente,
-        'Médico Solicitante': medico_solicitante,
+        'Telefono': telefono,
+        'Religion': religion,  # Campo de Religion agregado
+        'Numero de Expediente': numero_expediente,
+        'Medico Solicitante': medico_solicitante,
         'Episodio': episodio,
-        'Ubicación': ubicacion,
+        'Ubicacion': ubicacion,
         'Fecha y Hora': fecha_hora,
         'Procedimiento': procedimiento,
         'Motivo del Estudio': motivo_estudio,
-        'Comparación': comparacion,
-        'Técnica': tecnica,
+        'Comparacion': comparacion,
+        'Tecnica': tecnica,
         'Efectuado': efectuado,
         'Dictado': dictado,
-        'Número de Acceso': num_acceso,
+        'Numero de Acceso': num_acceso,
         'Hallazgos': hallazgos,
-        'Impresión Diagnóstica': impresion_diagnostica
+        'Impresion Diagnostica': impresion_diagnostica
     }
     save_patient(new_patient)
 
@@ -147,21 +150,22 @@ def save_patient(patient_data):
             'Sexo',
             'Entidad Federativa',
             'Domicilio',
-            'Teléfono',
-            'Número de Expediente',
-            'Médico Solicitante',
+            'Telefono',
+            'Religion',  # Nueva columna de Religion
+            'Numero de Expediente',
+            'Medico Solicitante',
             'Episodio',
-            'Ubicación',
+            'Ubicacion',
             'Fecha y Hora',
             'Procedimiento',
             'Motivo del Estudio',
-            'Comparación',
-            'Técnica',
+            'Comparacion',
+            'Tecnica',
             'Efectuado',
             'Dictado',
-            'Número de Acceso',
+            'Numero de Acceso',
             'Hallazgos',
-            'Impresión Diagnóstica'
+            'Impresion Diagnostica'
         ])
 
     # Crear un DataFrame a partir de los datos del paciente
@@ -171,4 +175,4 @@ def save_patient(patient_data):
     df = pd.concat([df, new_patient_df], ignore_index=True)
 
     # Guardar el DataFrame actualizado en el archivo CSV
-    df.to_csv(file_path, index=False)
+    df.to_csv(file_path, index=False) 

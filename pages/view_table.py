@@ -6,6 +6,12 @@ import os
 def show_table_page():
     st.title("Tabla de Pacientes")
 
+     # Botón para cargar CSV
+    uploaded_file = st.file_uploader("Cargar archivo CSV de pacientes", type=["csv"])
+    if uploaded_file is not None:
+        # Pasar directamente el archivo a append_to_database
+        append_to_database(uploaded_file)
+
     # Inicializar variables de estado para confirmaciones
     if 'confirm_delete' not in st.session_state:
         st.session_state.confirm_delete = False
@@ -22,10 +28,10 @@ def show_table_page():
 
     with action_cols[1]:
         if st.session_state.confirm_delete:
-            st.error("¿Estás seguro de que deseas eliminar el registro seleccionado?")
+            st.error("¿Estas seguro de que deseas eliminar el registro seleccionado?")
             confirm_delete_cols = st.columns([1, 1])
             with confirm_delete_cols[0]:
-                if st.button("Sí, eliminar"):
+                if st.button("Si, eliminar"):
                     delete_selected_record(st.session_state.selected_patient_full)
                     st.success("Registro eliminado exitosamente.")
                     st.session_state.confirm_delete = False
@@ -42,10 +48,10 @@ def show_table_page():
 
     with action_cols[2]:
         if st.session_state.confirm_reset:
-            st.error("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")
+            st.error("¿Estas seguro de que deseas eliminar todos los registros? Esta accion no se puede deshacer.")
             confirm_reset_cols = st.columns([1, 1])
             with confirm_reset_cols[0]:
-                if st.button("Sí, resetear"):
+                if st.button("Si, resetear"):
                     reset_database()
                     st.success("Base de datos reseteada exitosamente.")
                     st.session_state.confirm_reset = False
@@ -61,11 +67,11 @@ def show_table_page():
     if os.path.exists("data/patients.csv"):
         df = pd.read_csv("data/patients.csv")
     else:
-        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
+        st.warning("La base de datos esta vacia. Registra nuevos pacientes.")
         return
 
     if df.empty:
-        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
+        st.warning("La base de datos esta vacia. Registra nuevos pacientes.")
         return
 
     # Concatenar Nombre y Apellidos en el campo "Paciente"
@@ -81,10 +87,10 @@ def show_table_page():
     if sexo_filter:
         df = df[df['Sexo'].isin(sexo_filter)]
 
-    # DataFrame básico para mostrar en la tabla
-    df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Número de Expediente', 'Sexo', 'Impresión Diagnóstica']]
+    # DataFrame basico para mostrar en la tabla
+    df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion Diagnostica']]
 
-    # Dividir la página en dos columnas
+    # Dividir la pagina en dos columnas
     col1, col2 = st.columns([1, 1])
 
     with col1:
@@ -116,13 +122,13 @@ def show_table_page():
     with col2:
         # Verificar si hay filas seleccionadas
         if not selected_rows.empty:
-            # Obtener el identificador único del paciente seleccionado
-            paciente_id = selected_rows.iloc[0]['Número de Expediente']
+            # Obtener el identificador unico del paciente seleccionado
+            paciente_id = selected_rows.iloc[0]['Numero de Expediente']
 
             # Buscar el registro completo del paciente en el DataFrame original
-            selected_patient_full = df[df['Número de Expediente'] == paciente_id].iloc[0]
+            selected_patient_full = df[df['Numero de Expediente'] == paciente_id].iloc[0]
 
-            # Guardar en session_state para usar en la eliminación
+            # Guardar en session_state para usar en la eliminacion
             st.session_state.selected_patient_full = selected_patient_full
 
             st.subheader(f"Detalles de {selected_patient_full['Paciente']}")
@@ -130,9 +136,9 @@ def show_table_page():
             # Mostrar los detalles del paciente, incluyendo los campos faltantes
             campos = [
                 'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo', 
-                'Entidad Federativa', 'Domicilio', 'Teléfono', 'Número de Expediente', 'Médico Solicitante', 
-                'Episodio', 'Ubicación', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparación', 
-                'Técnica', 'Efectuado', 'Dictado', 'Número de Acceso', 'Hallazgos', 'Impresión Diagnóstica'
+                'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante', 
+                'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion', 
+                'Tecnica', 'Efectuado', 'Dictado', 'Numero de Acceso', 'Hallazgos', 'Impresion Diagnostica', 'Religion'
             ]
             for campo in campos:
                 st.write(f"**{campo}:** {selected_patient_full[campo]}")
@@ -146,18 +152,18 @@ def delete_selected_record(selected_patient):
     df = pd.read_csv("data/patients.csv")
 
     # Eliminar el registro del paciente seleccionado
-    df = df[df['Número de Expediente'] != selected_patient['Número de Expediente']]
+    df = df[df['Numero de Expediente'] != selected_patient['Numero de Expediente']]
 
     # Guardar el DataFrame actualizado
     df.to_csv("data/patients.csv", index=False)
 
 def reset_database():
-    # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias
+    # Eliminar el archivo CSV y crear uno nuevo vacio con las columnas necesarias
     file_path = "data/patients.csv"
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    # Crear un nuevo DataFrame vacío con las columnas definidas
+    # Crear un nuevo DataFrame vacio con las columnas definidas
     columns = [
         'Nombre',
         'Primer Apellido',
@@ -167,21 +173,45 @@ def reset_database():
         'Sexo',
         'Entidad Federativa',
         'Domicilio',
-        'Teléfono',
-        'Número de Expediente',
-        'Médico Solicitante',
+        'Telefono',
+        'Numero de Expediente',
+        'Medico Solicitante',
         'Episodio',
-        'Ubicación',
+        'Ubicacion',
         'Fecha y Hora',
         'Procedimiento',
         'Motivo del Estudio',
-        'Comparación',
-        'Técnica',
+        'Comparacion',
+        'Tecnica',
         'Efectuado',
         'Dictado',
-        'Número de Acceso',
+        'Numero de Acceso',
         'Hallazgos',
-        'Impresión Diagnóstica'
+        'Impresion Diagnostica',
+        'Religion'
     ]
     df_empty = pd.DataFrame(columns=columns)
     df_empty.to_csv(file_path, index=False)
+
+def append_to_database(new_data_file):
+    file_path = "data/patients.csv"
+
+    # Verificar que se cargó un archivo válido
+    if new_data_file is not None:
+        try:
+            # Leer el archivo cargado
+            new_data = pd.read_csv(new_data_file)
+        except UnicodeDecodeError:
+            st.error("Error de codificación en el archivo cargado. Asegúrate de que esté en formato ISO-8859-1 o sin caracteres especiales.")
+
+        # Combinar con la base de datos existente o crear uno nuevo si no existe
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df = pd.concat([df, new_data], ignore_index=True)
+        else:
+            df = new_data
+        
+        # Guardar el DataFrame en el archivo CSV
+        df.to_csv(file_path, index=False)
+    else:
+        st.warning("Por favor, carga un archivo para proceder.")
