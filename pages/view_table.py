@@ -1,12 +1,14 @@
+# pages/view_table.py
 import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
 import os
+import datetime
 
 def show_table_page():
     st.title("Tabla de Pacientes")
 
-     # Botón para cargar CSV
+    # Botón para cargar CSV
     uploaded_file = st.file_uploader("Cargar archivo CSV de pacientes", type=["csv"])
     if uploaded_file is not None:
         # Pasar directamente el archivo a append_to_database
@@ -28,10 +30,10 @@ def show_table_page():
 
     with action_cols[1]:
         if st.session_state.confirm_delete:
-            st.error("¿Estas seguro de que deseas eliminar el registro seleccionado?")
+            st.error("¿Estás seguro de que deseas eliminar el registro seleccionado?")
             confirm_delete_cols = st.columns([1, 1])
             with confirm_delete_cols[0]:
-                if st.button("Si, eliminar"):
+                if st.button("Sí, eliminar"):
                     delete_selected_record(st.session_state.selected_patient_full)
                     st.success("Registro eliminado exitosamente.")
                     st.session_state.confirm_delete = False
@@ -48,10 +50,10 @@ def show_table_page():
 
     with action_cols[2]:
         if st.session_state.confirm_reset:
-            st.error("¿Estas seguro de que deseas eliminar todos los registros? Esta accion no se puede deshacer.")
+            st.error("¿Estás seguro de que deseas eliminar todos los registros? Esta acción no se puede deshacer.")
             confirm_reset_cols = st.columns([1, 1])
             with confirm_reset_cols[0]:
-                if st.button("Si, resetear"):
+                if st.button("Sí, resetear"):
                     reset_database()
                     st.success("Base de datos reseteada exitosamente.")
                     st.session_state.confirm_reset = False
@@ -67,30 +69,94 @@ def show_table_page():
     if os.path.exists("data/patients.csv"):
         df = pd.read_csv("data/patients.csv")
     else:
-        st.warning("La base de datos esta vacia. Registra nuevos pacientes.")
+        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
         return
 
     if df.empty:
-        st.warning("La base de datos esta vacia. Registra nuevos pacientes.")
+        st.warning("La base de datos está vacía. Registra nuevos pacientes.")
         return
 
     # Concatenar Nombre y Apellidos en el campo "Paciente"
     df['Paciente'] = df['Nombre'] + " " + df['Primer Apellido'] + " " + df['Segundo Apellido']
 
-    # Filtros
-    nombre_filter = st.text_input("Filtrar por Nombre")
-    sexo_filter = st.multiselect("Filtrar por Sexo", options=df['Sexo'].unique())
+    # Convertir columnas de fecha a datetime
+    df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], errors='coerce')
+    df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], errors='coerce')
 
+    # Manejar valores nulos en fechas
+    fecha_nacimiento_min_value = df['Fecha de Nacimiento'].min()
+    fecha_nacimiento_max_value = df['Fecha de Nacimiento'].max()
+    fecha_estudio_min_value = df['Fecha y Hora'].min()
+    fecha_estudio_max_value = df['Fecha y Hora'].max()
+
+    if pd.isnull(fecha_nacimiento_min_value):
+        fecha_nacimiento_min_value = datetime.date(1900, 1, 1)
+    else:
+        fecha_nacimiento_min_value = fecha_nacimiento_min_value.date()
+
+    if pd.isnull(fecha_nacimiento_max_value):
+        fecha_nacimiento_max_value = datetime.date.today()
+    else:
+        fecha_nacimiento_max_value = fecha_nacimiento_max_value.date()
+
+    if pd.isnull(fecha_estudio_min_value):
+        fecha_estudio_min_value = datetime.date(1900, 1, 1)
+    else:
+        fecha_estudio_min_value = fecha_estudio_min_value.date()
+
+    if pd.isnull(fecha_estudio_max_value):
+        fecha_estudio_max_value = datetime.date.today()
+    else:
+        fecha_estudio_max_value = fecha_estudio_max_value.date()
+
+    # Filtros
+    with st.expander("Filtros de Búsqueda"):
+        nombre_filter = st.text_input("Filtrar por Nombre")
+        sexo_filter = st.multiselect("Filtrar por Sexo", options=df['Sexo'].dropna().unique())
+        expediente_filter = st.text_input("Filtrar por Número de Expediente")
+        curp_filter = st.text_input("Filtrar por CURP")
+        medico_filter = st.multiselect("Filtrar por Médico Solicitante", options=df['Medico Solicitante'].dropna().unique())
+        procedimiento_filter = st.multiselect("Filtrar por Procedimiento", options=df['Procedimiento'].dropna().unique())
+        impresion_filter = st.multiselect("Filtrar por Impresión Diagnóstica", options=df['Impresion Diagnostica'].dropna().unique())
+        # Rango de fechas de nacimiento
+        fecha_nacimiento_min = st.date_input("Fecha de Nacimiento - Desde", value=fecha_nacimiento_min_value)
+        fecha_nacimiento_max = st.date_input("Fecha de Nacimiento - Hasta", value=fecha_nacimiento_max_value)
+        # Rango de fechas de estudios
+        fecha_estudio_min = st.date_input("Fecha del Estudio - Desde", value=fecha_estudio_min_value)
+        fecha_estudio_max = st.date_input("Fecha del Estudio - Hasta", value=fecha_estudio_max_value)
+
+    # Aplicar los filtros
     if nombre_filter:
         df = df[df['Paciente'].str.contains(nombre_filter, case=False, na=False)]
 
     if sexo_filter:
         df = df[df['Sexo'].isin(sexo_filter)]
 
-    # DataFrame basico para mostrar en la tabla
+    if expediente_filter:
+        df = df[df['Numero de Expediente'].astype(str).str.contains(expediente_filter, case=False, na=False)]
+
+    if curp_filter:
+        df = df[df['CURP'].str.contains(curp_filter, case=False, na=False)]
+
+    if medico_filter:
+        df = df[df['Medico Solicitante'].isin(medico_filter)]
+
+    if procedimiento_filter:
+        df = df[df['Procedimiento'].isin(procedimiento_filter)]
+
+    if impresion_filter:
+        df = df[df['Impresion Diagnostica'].isin(impresion_filter)]
+
+    if fecha_nacimiento_min and fecha_nacimiento_max:
+        df = df[(df['Fecha de Nacimiento'] >= pd.to_datetime(fecha_nacimiento_min)) & (df['Fecha de Nacimiento'] <= pd.to_datetime(fecha_nacimiento_max))]
+
+    if fecha_estudio_min and fecha_estudio_max:
+        df = df[(df['Fecha y Hora'] >= pd.to_datetime(fecha_estudio_min)) & (df['Fecha y Hora'] <= pd.to_datetime(fecha_estudio_max))]
+
+    # DataFrame básico para mostrar en la tabla
     df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion Diagnostica']]
 
-    # Dividir la pagina en dos columnas
+    # Dividir la página en dos columnas
     col1, col2 = st.columns([1, 1])
 
     with col1:
@@ -122,27 +188,27 @@ def show_table_page():
     with col2:
         # Verificar si hay filas seleccionadas
         if not selected_rows.empty:
-            # Obtener el identificador unico del paciente seleccionado
+            # Obtener el identificador único del paciente seleccionado
             paciente_id = selected_rows.iloc[0]['Numero de Expediente']
 
             # Buscar el registro completo del paciente en el DataFrame original
             selected_patient_full = df[df['Numero de Expediente'] == paciente_id].iloc[0]
 
-            # Guardar en session_state para usar en la eliminacion
+            # Guardar en session_state para usar en la eliminación
             st.session_state.selected_patient_full = selected_patient_full
 
             st.subheader(f"Detalles de {selected_patient_full['Paciente']}")
 
             # Mostrar los detalles del paciente, incluyendo los campos faltantes
             campos = [
-                'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo', 
-                'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante', 
-                'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion', 
+                'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
+                'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante',
+                'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion',
                 'Tecnica', 'Efectuado', 'Dictado', 'Numero de Acceso', 'Hallazgos', 'Impresion Diagnostica', 'Religion'
             ]
             for campo in campos:
-                st.write(f"**{campo}:** {selected_patient_full[campo]}")
-        else:
+                st.write(f"**{campo}:** {selected_patient_full.get(campo, '')}")
+        else:   
             st.subheader("Seleccione un paciente para ver los detalles")
             if 'selected_patient_full' in st.session_state:
                 del st.session_state.selected_patient_full
@@ -158,12 +224,12 @@ def delete_selected_record(selected_patient):
     df.to_csv("data/patients.csv", index=False)
 
 def reset_database():
-    # Eliminar el archivo CSV y crear uno nuevo vacio con las columnas necesarias
+    # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias
     file_path = "data/patients.csv"
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    # Crear un nuevo DataFrame vacio con las columnas definidas
+    # Crear un nuevo DataFrame vacío con las columnas definidas
     columns = [
         'Nombre',
         'Primer Apellido',
@@ -210,7 +276,7 @@ def append_to_database(new_data_file):
             df = pd.concat([df, new_data], ignore_index=True)
         else:
             df = new_data
-        
+
         # Guardar el DataFrame en el archivo CSV
         df.to_csv(file_path, index=False)
     else:

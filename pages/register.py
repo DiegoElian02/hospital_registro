@@ -1,3 +1,4 @@
+# pages\register.py
 import streamlit as st
 import pandas as pd
 import os
@@ -7,7 +8,7 @@ from src.authentication import authenticate_user  # Asegúrate de tener esta fun
 def show_register_page(user_role):
     st.title("Registrar Paciente")
 
-    # Crear columnas para posicionar el boton en la derecha
+    # Crear columnas para posicionar el botón en la derecha
     header_cols = st.columns([8, 1])
     with header_cols[1]:
         if st.button("Cerrar Sesion"):
@@ -15,6 +16,11 @@ def show_register_page(user_role):
             st.session_state.user_role = None
             st.session_state.page = 'Registrar Paciente'
             st.rerun()
+
+    # Botón para cambiar a la página de escaneo QR
+    if st.button("Escanear QR"):
+        st.session_state.page = 'Escanear QR'
+        st.rerun()
 
     # Reorganizamos la interfaz: Datos de identificacion primero
     st.subheader("Datos de Identificacion Personal")
