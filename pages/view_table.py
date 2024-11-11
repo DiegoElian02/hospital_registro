@@ -66,8 +66,18 @@ def show_table_page():
                 st.session_state.confirm_reset = True
 
     # Leer el DataFrame
-    if os.path.exists("data/patients.csv"):
-        df = pd.read_csv("data/patients.csv")
+    file_path = "data/patients.csv"
+    if os.path.exists(file_path):
+        try:
+            # Leer el CSV sin parsear las fechas
+            df = pd.read_csv(file_path, encoding='utf-8')
+            # Parsear las fechas después de leer el CSV
+            df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
+            df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
+        except Exception as e:
+            st.error("Error al leer la base de datos.")
+            st.error(str(e))
+            return
     else:
         st.warning("La base de datos está vacía. Registra nuevos pacientes.")
         return
@@ -79,9 +89,8 @@ def show_table_page():
     # Concatenar Nombre y Apellidos en el campo "Paciente"
     df['Paciente'] = df['Nombre'] + " " + df['Primer Apellido'] + " " + df['Segundo Apellido']
 
-    # Convertir columnas de fecha a datetime
-    df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], errors='coerce')
-    df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], errors='coerce')
+    # Verificar el número de registros
+    st.write(f"Número de registros en la base de datos: {len(df)}")
 
     # Manejar valores nulos en fechas
     fecha_nacimiento_min_value = df['Fecha de Nacimiento'].min()
@@ -156,6 +165,9 @@ def show_table_page():
     # DataFrame básico para mostrar en la tabla
     df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion Diagnostica']]
 
+    # Mostrar el número de registros en la tabla después de aplicar los filtros
+    st.write(f"Número de registros en la tabla: {len(df_basic)}")
+
     # Dividir la página en dos columnas
     col1, col2 = st.columns([1, 1])
 
@@ -165,13 +177,18 @@ def show_table_page():
         # Configurar AgGrid
         gb = GridOptionsBuilder.from_dataframe(df_basic)
         gb.configure_selection(selection_mode='single', use_checkbox=False)
+        # Configurar formato de fecha para las columnas
+        gb.configure_column('Fecha de Nacimiento', type=['dateColumnFilter', 'customDateTimeFormat'], custom_format_string='dd/MM/yyyy', pivot=True)
+
+        # Configurar opciones adicionales
+        gb.configure_grid_options(domLayout='normal')
         grid_options = gb.build()
 
         # Mostrar AgGrid
         grid_response = AgGrid(
             df_basic,
             gridOptions=grid_options,
-            height=400,
+            height=500,  # Puedes ajustar la altura o establecerla en None
             width='100%',
             data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
             update_mode=GridUpdateMode.SELECTION_CHANGED,
@@ -207,21 +224,38 @@ def show_table_page():
                 'Tecnica', 'Efectuado', 'Dictado', 'Numero de Acceso', 'Hallazgos', 'Impresion Diagnostica', 'Religion'
             ]
             for campo in campos:
-                st.write(f"**{campo}:** {selected_patient_full.get(campo, '')}")
-        else:   
+                valor = selected_patient_full.get(campo, '')
+                if campo in ['Fecha de Nacimiento', 'Fecha y Hora']:
+                    if pd.notnull(valor):
+                        valor = valor.strftime('%d/%m/%Y')
+                    else:
+                        valor = ''
+                st.write(f"**{campo}:** {valor}")
+        else:
             st.subheader("Seleccione un paciente para ver los detalles")
             if 'selected_patient_full' in st.session_state:
                 del st.session_state.selected_patient_full
 
 def delete_selected_record(selected_patient):
     # Leer el DataFrame original
-    df = pd.read_csv("data/patients.csv")
+    try:
+        df = pd.read_csv("data/patients.csv", encoding='utf-8')
+        df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
+        df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
+    except Exception as e:
+        st.error("Error al leer la base de datos.")
+        st.error(str(e))
+        return
 
     # Eliminar el registro del paciente seleccionado
     df = df[df['Numero de Expediente'] != selected_patient['Numero de Expediente']]
 
     # Guardar el DataFrame actualizado
-    df.to_csv("data/patients.csv", index=False)
+    try:
+        df.to_csv("data/patients.csv", index=False, encoding='utf-8', date_format='%d/%m/%Y')
+    except Exception as e:
+        st.error("Error al guardar los cambios en la base de datos.")
+        st.error(str(e))
 
 def reset_database():
     # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias
@@ -257,7 +291,11 @@ def reset_database():
         'Religion'
     ]
     df_empty = pd.DataFrame(columns=columns)
-    df_empty.to_csv(file_path, index=False)
+    try:
+        df_empty.to_csv(file_path, index=False, encoding='utf-8')
+    except Exception as e:
+        st.error("Error al reiniciar la base de datos.")
+        st.error(str(e))
 
 def append_to_database(new_data_file):
     file_path = "data/patients.csv"
@@ -265,19 +303,29 @@ def append_to_database(new_data_file):
     # Verificar que se cargó un archivo válido
     if new_data_file is not None:
         try:
-            # Leer el archivo cargado
-            new_data = pd.read_csv(new_data_file)
+            # Leer el archivo cargado sin parsear las fechas
+            new_data = pd.read_csv(new_data_file, encoding='utf-8')
+
+            # Parsear las fechas después de leer el CSV
+            new_data['Fecha de Nacimiento'] = pd.to_datetime(new_data['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
+            new_data['Fecha y Hora'] = pd.to_datetime(new_data['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
+
+            # Combinar con la base de datos existente o crear uno nuevo si no existe
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path, encoding='utf-8')
+                # Parsear las fechas en el DataFrame existente
+                df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
+                df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
+                df = pd.concat([df, new_data], ignore_index=True)
+            else:
+                df = new_data
+
+            # Guardar el DataFrame en el archivo CSV
+            df.to_csv(file_path, index=False, encoding='utf-8', date_format='%d/%m/%Y')
         except UnicodeDecodeError:
-            st.error("Error de codificación en el archivo cargado. Asegúrate de que esté en formato ISO-8859-1 o sin caracteres especiales.")
-
-        # Combinar con la base de datos existente o crear uno nuevo si no existe
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path)
-            df = pd.concat([df, new_data], ignore_index=True)
-        else:
-            df = new_data
-
-        # Guardar el DataFrame en el archivo CSV
-        df.to_csv(file_path, index=False)
+            st.error("Error de codificación en el archivo cargado. Asegúrate de que esté en formato UTF-8 o sin caracteres especiales.")
+        except Exception as e:
+            st.error("Ocurrió un error al procesar el archivo cargado.")
+            st.error(str(e))
     else:
         st.warning("Por favor, carga un archivo para proceder.")
