@@ -71,9 +71,10 @@ def show_table_page():
         try:
             # Leer el CSV sin parsear las fechas
             df = pd.read_csv(file_path, encoding='utf-8')
-            # Parsear las fechas después de leer el CSV
-            df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
-            df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
+
+            # Parsear las fechas para visualización
+            df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], dayfirst=True, errors='coerce')
+            df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], dayfirst=True, errors='coerce')
         except Exception as e:
             st.error("Error al leer la base de datos.")
             st.error(str(e))
@@ -227,7 +228,11 @@ def show_table_page():
                 valor = selected_patient_full.get(campo, '')
                 if campo in ['Fecha de Nacimiento', 'Fecha y Hora']:
                     if pd.notnull(valor):
-                        valor = valor.strftime('%d/%m/%Y')
+                        valor = pd.to_datetime(valor, dayfirst=True, errors='coerce')
+                        if pd.notnull(valor):
+                            valor = valor.strftime('%d/%m/%Y')
+                        else:
+                            valor = selected_patient_full.get(campo, '')
                     else:
                         valor = ''
                 st.write(f"**{campo}:** {valor}")
@@ -237,11 +242,9 @@ def show_table_page():
                 del st.session_state.selected_patient_full
 
 def delete_selected_record(selected_patient):
-    # Leer el DataFrame original
+    # Leer el DataFrame original sin parsear las fechas
     try:
         df = pd.read_csv("data/patients.csv", encoding='utf-8')
-        df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
-        df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
     except Exception as e:
         st.error("Error al leer la base de datos.")
         st.error(str(e))
@@ -250,9 +253,9 @@ def delete_selected_record(selected_patient):
     # Eliminar el registro del paciente seleccionado
     df = df[df['Numero de Expediente'] != selected_patient['Numero de Expediente']]
 
-    # Guardar el DataFrame actualizado
+    # Guardar el DataFrame actualizado sin modificar las fechas
     try:
-        df.to_csv("data/patients.csv", index=False, encoding='utf-8', date_format='%d/%m/%Y')
+        df.to_csv("data/patients.csv", index=False, encoding='utf-8')
     except Exception as e:
         st.error("Error al guardar los cambios en la base de datos.")
         st.error(str(e))
@@ -306,22 +309,16 @@ def append_to_database(new_data_file):
             # Leer el archivo cargado sin parsear las fechas
             new_data = pd.read_csv(new_data_file, encoding='utf-8')
 
-            # Parsear las fechas después de leer el CSV
-            new_data['Fecha de Nacimiento'] = pd.to_datetime(new_data['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
-            new_data['Fecha y Hora'] = pd.to_datetime(new_data['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
-
             # Combinar con la base de datos existente o crear uno nuevo si no existe
             if os.path.exists(file_path):
                 df = pd.read_csv(file_path, encoding='utf-8')
-                # Parsear las fechas en el DataFrame existente
-                df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], format='%d/%m/%Y', errors='coerce')
-                df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], format='%d/%m/%Y', errors='coerce')
                 df = pd.concat([df, new_data], ignore_index=True)
             else:
                 df = new_data
 
-            # Guardar el DataFrame en el archivo CSV
-            df.to_csv(file_path, index=False, encoding='utf-8', date_format='%d/%m/%Y')
+            # Guardar el DataFrame en el archivo CSV sin modificar las fechas
+            df.to_csv(file_path, index=False, encoding='utf-8')
+            st.success("Archivo CSV cargado y datos actualizados exitosamente.")
         except UnicodeDecodeError:
             st.error("Error de codificación en el archivo cargado. Asegúrate de que esté en formato UTF-8 o sin caracteres especiales.")
         except Exception as e:
