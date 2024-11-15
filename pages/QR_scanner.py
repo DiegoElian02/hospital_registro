@@ -129,7 +129,7 @@ def show_qr_scanner_page():
                             # Guardar el registro en el archivo CSV
                             save_consultation(registro_completo)
                             st.success("Consulta registrada exitosamente en la base de datos.")
-                            st.experimental_rerun()
+                            st.rerun()
 
                     # Si el paciente existe, mostrar sus datos y doctores asociados en la columna derecha
                     if not patient_records.empty:
