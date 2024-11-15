@@ -1,0 +1,933 @@
+[
+    {
+      "Nombre del Médico": "Dr. Juan Pérez García",
+      "Impresion diagnostica": "Alzheimer",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "juan.perez@hospitalmexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. María López Hernández",
+      "Impresion diagnostica": "Alzheimer",
+      "Especialidad": "Geriatría",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "maria.lopez@clinicageriatricamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Sánchez Martínez",
+      "Impresion diagnostica": "Alzheimer",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "carlos.sanchez@neurocentromexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Gómez Rodríguez",
+      "Impresion diagnostica": "Alzheimer",
+      "Especialidad": "Psiquiatría",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "ana.gomez@psiquiatriamexico.org"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Fernández Torres",
+      "Impresion diagnostica": "Alzheimer",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "luis.fernandez@hospitaldelcerebro.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Morales Díaz",
+      "Impresion diagnostica": "Anemia",
+      "Especialidad": "Hematología",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "roberto.morales@hematologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Ruiz Sánchez",
+      "Impresion diagnostica": "Anemia",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "laura.ruiz@clinicainternista.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Enrique Ramírez Gómez",
+      "Impresion diagnostica": "Anemia",
+      "Especialidad": "Hematología",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "enrique.ramirez@hospitalhematologia.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Torres López",
+      "Impresion diagnostica": "Anemia",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "patricia.torres@medicinainternamexico.org"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel Hernández Pérez",
+      "Impresion diagnostica": "Anemia",
+      "Especialidad": "Hematología",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "miguel.hernandez@hematologiacentral.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. José Martínez Castro",
+      "Impresion diagnostica": "Asma",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "jose.martinez@neumologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Elena García López",
+      "Impresion diagnostica": "Asma",
+      "Especialidad": "Alergología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "elena.garcia@alergologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando Torres Ramírez",
+      "Impresion diagnostica": "Asma",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "ernando.torres@clinicadelasma.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia Hernández Gómez",
+      "Impresion diagnostica": "Asma",
+      "Especialidad": "Alergología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "silvia.hernandez@alergiasrespiratorias.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo Pérez Sánchez",
+      "Impresion diagnostica": "Asma",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "ricardo.perez@hospitaldelpulmon.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Carmen López Hernández",
+      "Impresion diagnostica": "Cáncer de Cérvix",
+      "Especialidad": "Ginecología Oncológica",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "carmen.lopez@oncoginecologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Alberto Ruiz García",
+      "Impresion diagnostica": "Cáncer de Cérvix",
+      "Especialidad": "Oncología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "alberto.ruiz@oncologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Teresa Sánchez Martínez",
+      "Impresion diagnostica": "Cáncer de Cérvix",
+      "Especialidad": "Ginecología Oncológica",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "teresa.sanchez@clinicacancerfemenino.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Javier Gómez Rodríguez",
+      "Impresion diagnostica": "Cáncer de Cérvix",
+      "Especialidad": "Oncología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "javier.gomez@hospitaldelacancer.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Rosa Fernández Torres",
+      "Impresion diagnostica": "Cáncer de Cérvix",
+      "Especialidad": "Ginecología Oncológica",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "rosa.fernandez@oncoginecologiacentral.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Pérez García",
+      "Impresion diagnostica": "Cáncer de Mama",
+      "Especialidad": "Mastología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "laura.perez@mastologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos López Hernández",
+      "Impresion diagnostica": "Cáncer de Mama",
+      "Especialidad": "Oncología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "carlos.lopez@oncologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Martínez Sánchez",
+      "Impresion diagnostica": "Cáncer de Mama",
+      "Especialidad": "Mastología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "ana.martinez@clinicacancerdemama.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Gómez Ramírez",
+      "Impresion diagnostica": "Cáncer de Mama",
+      "Especialidad": "Oncología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "roberto.gomez@hospitaldelamama.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. María Torres Fernández",
+      "Impresion diagnostica": "Cáncer de Mama",
+      "Especialidad": "Mastología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "maria.torres@mastologiacentral.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Juan Hernández Díaz",
+      "Impresion diagnostica": "Demencia Senil",
+      "Especialidad": "Geriatría",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "juan.hernandez@geriatríamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Ruiz Gómez",
+      "Impresion diagnostica": "Demencia Senil",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "patricia.ruiz@neurologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Enrique López Martínez",
+      "Impresion diagnostica": "Demencia Senil",
+      "Especialidad": "Geriatría",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "patricia.ruiz@neurologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia García Sánchez",
+      "Impresion diagnostica": "Demencia Senil",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "silvia.garcia@hospitaldelcerebro.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando Torres Pérez",
+      "Impresion diagnostica": "Demencia Senil",
+      "Especialidad": "Geriatría",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "fernando.torres@geriatríacentral.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana López Hernández",
+      "Impresion diagnostica": "Depresion",
+      "Especialidad": "Psiquiatría",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "ana.lopez@psiquiatriamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. José Martínez García",
+      "Impresion diagnostica": "Depresion",
+      "Especialidad": "Psicología Clínica",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "jose.martinez@psicologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Sánchez Ramírez",
+      "Impresion diagnostica": "Depresion",
+      "Especialidad": "Psiquiatría",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "laura.sanchez@clinicadepres"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Hernández",
+      "Impresion diagnostica": "Desnutricion leve",
+      "Especialidad": "Nutriología",
+      "Teléfono": "55 6789 1234",
+      "Contacto": "laura.hernandez@nutricionlife.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel Ramírez",
+      "Impresion diagnostica": "Desnutricion leve",
+      "Especialidad": "Nutriología",
+      "Teléfono": "55 7890 2345",
+      "Contacto": "miguel.ramirez@clinicadelnutricionista.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Gómez",
+      "Impresion diagnostica": "Desnutricion leve",
+      "Especialidad": "Nutriología",
+      "Teléfono": "55 8901 3456",
+      "Contacto": "patricia.gomez@nutriologialive.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo López",
+      "Impresion diagnostica": "Desnutricion leve",
+      "Especialidad": "Nutriología",
+      "Teléfono": "55 9012 4567",
+      "Contacto": "ricardo.lopez@nutricentermx.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Carmen Díaz",
+      "Impresion diagnostica": "Desnutricion leve",
+      "Especialidad": "Nutriología",
+      "Teléfono": "55 0123 5678",
+      "Contacto": "carmen.diaz@nutritionteam.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo Fernández",
+      "Impresion diagnostica": "EPOC",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "ricardo.fernandez@neumologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana García",
+      "Impresion diagnostica": "EPOC",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "ana.garcia@clinicadelpulmon.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Jorge López",
+      "Impresion diagnostica": "EPOC",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "jorge.lopez@neumocare.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Torres",
+      "Impresion diagnostica": "EPOC",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "laura.torres@pulmonclinico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Ramírez",
+      "Impresion diagnostica": "EPOC",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "laura.torres@pulmonclinico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Enrique Rivas",
+      "Impresion diagnostica": "Enfermedad Cardiovascular",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "enrique.rivas@hospitalcardio.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Medina",
+      "Impresion diagnostica": "Enfermedad Cardiovascular",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "laura.medina@clinicacardio.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel Torres",
+      "Impresion diagnostica": "Enfermedad Cardiovascular",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "miguel.torres@cardiologosmexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Carmen López",
+      "Impresion diagnostica": "Enfermedad Cardiovascular",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "carmen.lopez@cardiovital.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Sánchez",
+      "Impresion diagnostica": "Enfermedad Cardiovascular",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "luis.sanchez@clinicadelcorazon.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Hernández",
+      "Impresion diagnostica": "Enfermedades Hepáticas",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "roberto.hernandez@higadocuidado.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Gómez",
+      "Impresion diagnostica": "Enfermedades Hepáticas",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "patricia.gomez@clinicadehigado.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Medina",
+      "Impresion diagnostica": "Enfermedades Hepáticas",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "carlos.medina@hospitalhepatologico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Ramírez",
+      "Impresion diagnostica": "Enfermedades Hepáticas",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "ana.ramirez@hepatovida.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando Torres",
+      "Impresion diagnostica": "Enfermedades Hepáticas",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 2345 5678",
+      "Contacto": "fernando.torres@clinicagastro.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo Pérez",
+      "Impresion diagnostica": "Hepatitis",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 3456 6789",
+      "Contacto": "ricardo.perez@gastromexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Gómez",
+      "Impresion diagnostica": "Hepatitis",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 4567 7890",
+      "Contacto": "laura.gomez@clinicadehigado.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Javier Torres",
+      "Impresion diagnostica": "Hepatitis",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 5678 8901",
+      "Contacto": "javier.torres@hepatichealth.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia Hernández",
+      "Impresion diagnostica": "Hepatitis",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 6789 9012",
+      "Contacto": "silvia.hernandez@clinicagastro.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Juan López",
+      "Impresion diagnostica": "Hepatitis",
+      "Especialidad": "Hepatología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "juan.lopez@higadoprotegido.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando Aguilar",
+      "Impresion diagnostica": "Hipertensión",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "fernando.aguilar@clinicacardio.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Jiménez Medicina Interna 55 2345 6789 ana.jimenez@medicinainterna.mx Hipertensión",
+      "Impresion diagnostica": "Hipertensión",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "ana.jimenez@medicinainterna.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Pérez",
+      "Impresion diagnostica": "Hipertensión",
+      "Especialidad": "Cardiología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "luis.perez@cardiosalud.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Rosa Martínez",
+      "Impresion diagnostica": "Hipertensión",
+      "Especialidad": "Nefrología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "rosa.martinez@nefrologiamx.com"
+    },
+    {
+      "Nombre del Médico": "Dr. José Hernández",
+      "Impresion diagnostica": "Hipertensión",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "jose.hernandez@clinicahipertension.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura García",
+      "Impresion diagnostica": "Infecciones Gastrointestinales",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "laura.garcia@gastroclinica.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Mario López",
+      "Impresion diagnostica": "Infecciones Gastrointestinales",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "mario.lopez@gastrocenter.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Carla Torres",
+      "Impresion diagnostica": "Infecciones Gastrointestinales",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "carla.torres@clinicainterna.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo Ramírez",
+      "Impresion diagnostica": "Infecciones Gastrointestinales",
+      "Especialidad": "Infectología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "ricardo.ramirez@infectoclinica.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Fernández",
+      "Impresion diagnostica": "Infecciones Gastrointestinales",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "ana.fernandez@gastrocare.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Medina",
+      "Impresion diagnostica": "Infecciones Respiratorias Agudas",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "carlos.medina@clinicadelpulmon.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia Torres",
+      "Impresion diagnostica": "Infecciones Respiratorias Agudas",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "silvia.torres@neumologiacentro.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Rafael Gómez",
+      "Impresion diagnostica": "Infecciones Respiratorias Agudas",
+      "Especialidad": "Pediatría",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "rafael.gomez@pediatriamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia López",
+      "Impresion diagnostica": "Infecciones Respiratorias Agudas",
+      "Especialidad": "Neumología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "patricia.lopez@pulmoncare.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Javier Sánchez",
+      "Impresion diagnostica": "Infecciones Respiratorias Agudas",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "javier.sanchez@medicinageneral.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Hernández",
+      "Impresion diagnostica": "Lumbalgia",
+      "Especialidad": "Ortopedia",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "roberto.hernandez@clinicadelacolumna.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Mariana Pérez",
+      "Impresion diagnostica": "Lumbalgia",
+      "Especialidad": "Fisioterapia",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "mariana.perez@fisioterapialumbalgia.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Daniel Gómez",
+      "Impresion diagnostica": "Lumbalgia",
+      "Especialidad": "Ortopedia",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "daniel.gomez@clinicadehuesos.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Claudia Torres",
+      "Impresion diagnostica": "Lumbalgia",
+      "Especialidad": "Reumatología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "claudia.torres@reumamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Francisco López",
+      "Impresion diagnostica": "Lumbalgia",
+      "Especialidad": "Fisioterapia",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "francisco.lopez@fisiocare.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Teresa Ramírez",
+      "Impresion diagnostica": "Migraña",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "teresa.ramirez@neuroclinica.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Mario López",
+      "Impresion diagnostica": "Migraña",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "mario.lopez@migrañacenter.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Susana Hernández",
+      "Impresion diagnostica": "Migraña",
+      "Especialidad": "Neurología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "susana.hernandez@neuromexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Rafael Gómez",
+      "Impresion diagnostica": "Migraña",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "rafael.gomez@clinicadeladolor.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Mariana Torres",
+      "Impresion diagnostica": "Migraña",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "mariana.torres@medicinainterna.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Juan Sánchez",
+      "Impresion diagnostica": "Osteoporosis",
+      "Especialidad": "Reumatología",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "juan.sanchez@reumatologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia López",
+      "Impresion diagnostica": "Osteoporosis",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "silvia.lopez@endocrinologiamexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Ramírez",
+      "Impresion diagnostica": "Osteoporosis",
+      "Especialidad": "Reumatología",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "roberto.ramirez@clinicadelhueso.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Torres",
+      "Impresion diagnostica": "Osteoporosis",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "ana.torres@osteoclinic.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Fernández",
+      "Impresion diagnostica": "Osteoporosis",
+      "Especialidad": "Geriatría",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "luis.fernandez@geriatria.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Enrique Pérez",
+      "Impresion diagnostica": "Prostatitis",
+      "Especialidad": "Urología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "enrique.perez@urologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Hernández",
+      "Impresion diagnostica": "Prostatitis",
+      "Especialidad": "Urología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "carlos.hernandez@clinicadeurologia.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel Torres",
+      "Impresion diagnostica": "Prostatitis",
+      "Especialidad": "Urología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "miguel.torres@prostataclinic.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo López",
+      "Impresion diagnostica": "Prostatitis",
+      "Especialidad": "Urología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "ricardo.lopez@saludhombre.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando García",
+      "Impresion diagnostica": "Prostatitis",
+      "Especialidad": "Urología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "fernando.garcia@urologoclinic.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Gómez",
+      "Impresion diagnostica": "Quistes Ováricos",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 6789 0123",
+      "Contacto": "laura.gomez@ginecologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Martínez",
+      "Impresion diagnostica": "Quistes Ováricos",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 7890 1234",
+      "Contacto": "ana.martinez@clinicaginecologica.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia Torres",
+      "Impresion diagnostica": "Quistes Ováricos",
+      "Especialidad": "Ginecología Oncológica",
+      "Teléfono": "55 8901 2345",
+      "Contacto": "silvia.torres@oncoginecologiacentro.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Claudia López",
+      "Impresion diagnostica": "Quistes Ováricos",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 9012 3456",
+      "Contacto": "claudia.lopez@saludfemenina.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Fernández",
+      "Impresion diagnostica": "Quistes Ováricos",
+      "Especialidad": "Medicina Reproductiva",
+      "Teléfono": "55 0123 4567",
+      "Contacto": "patricia.fernandez@fertilidadmx.com"
+    },
+    {
+      "Nombre del Médico": "Dr. José Morales",
+      "Impresion diagnostica": "Traumatismos Menores",
+      "Especialidad": "Ortopedia",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "jose.morales@clinicadeortopedia.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Elena Ramírez",
+      "Impresion diagnostica": "Traumatismos Menores",
+      "Especialidad": "Urgencias",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "elena.ramirez@urgenciasmx.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel Torres",
+      "Impresion diagnostica": "Traumatismos Menores",
+      "Especialidad": "Traumatología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "miguel.torres@clinicatraumatologica.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando Gómez",
+      "Impresion diagnostica": "Traumatismos Menores",
+      "Especialidad": "Fisioterapia",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "fernando.gomez@fisiocare.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Mariana Sánchez",
+      "Impresion diagnostica": "Traumatismos Menores",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "mariana.sanchez@medicinageneral.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Juan Morales",
+      "Impresion diagnostica": "Apendicitis",
+      "Especialidad": "Cirugía General",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "juan.morales@cirugiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Ramírez",
+      "Impresion diagnostica": "Apendicitis",
+      "Especialidad": "Cirugía General",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "ana.ramirez@clinicacirugia.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Ricardo Fernández",
+      "Impresion diagnostica": "Apendicitis",
+      "Especialidad": "Cirugía General",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "ricardo.fernandez@hospitalcirujano.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. María Torres",
+      "Impresion diagnostica": "Apendicitis",
+      "Especialidad": "Cirugía General",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "maria.torres@cirugiamedica.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Gómez",
+      "Impresion diagnostica": "Apendicitis",
+      "Especialidad": "Cirugía General",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "luis.gomez@cirugiageneral.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Martínez",
+      "Impresion diagnostica": "Diabetes tipo 2",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "laura.martinez@endocrinologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Pedro Ramírez",
+      "Impresion diagnostica": "Diabetes tipo 2",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "pedro.ramirez@internamedica.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Rosa López",
+      "Impresion diagnostica": "Diabetes tipo 2",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "rosa.lopez@clinicadiabetes.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Carlos Torres",
+      "Impresion diagnostica": "Diabetes tipo 2",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "carlos.torres@diabetologos.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Sofía Hernández",
+      "Impresion diagnostica": "Diabetes tipo 2",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "sofia.hernandez@diabetesclinic.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Miguel González",
+      "Impresion diagnostica": "Gastritis",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "miguel.gonzalez@gastroexpertos.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Elena Rodríguez",
+      "Impresion diagnostica": "Gastritis",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "elena.rodriguez@clinicadigestiva.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Andrés Martínez",
+      "Impresion diagnostica": "Gastritis",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "andres.martinez@gastromexico.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Clara Gómez",
+      "Impresion diagnostica": "Gastritis",
+      "Especialidad": "Gastroenterología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "clara.gomez@gastroclinic.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Pablo Jiménez",
+      "Impresion diagnostica": "Gastritis",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "pablo.jimenez@digestivamedica.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Silvia Torres",
+      "Impresion diagnostica": "Hipotiroidismo",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "silvia.torres@tiroidemexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Javier Ramírez",
+      "Impresion diagnostica": "Hipotiroidismo",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "javier.ramirez@clinicatiroides.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Hernández",
+      "Impresion diagnostica": "Hipotiroidismo",
+      "Especialidad": "Medicina Interna",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "patricia.hernandez@tiroidemx.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Fernando López",
+      "Impresion diagnostica": "Hipotiroidismo",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "fernando.lopez@hospitaltiroides.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Morales",
+      "Impresion diagnostica": "Hipotiroidismo",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "ana.morales@tiroidesalud.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Laura Gómez",
+      "Impresion diagnostica": "Trastornos Hormonales",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "laura.gomez@hormonasmexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Roberto Torres",
+      "Impresion diagnostica": "Trastornos Hormonales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "roberto.torres@clinicahormonas.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Clara Jiménez",
+      "Impresion diagnostica": "Trastornos Hormonales",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "clara.jimenez@endocrinoexpertos.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Rafael Fernández",
+      "Impresion diagnostica": "Trastornos Hormonales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "rafael.fernandez@hormonasalud.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Sofía Martínez",
+      "Impresion diagnostica": "Trastornos Hormonales",
+      "Especialidad": "Endocrinología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "sofia.martinez@endocrinologiamx.com"
+    },
+    {
+      "Nombre del Médico": "Dra. Carmen López",
+      "Impresion diagnostica": "Trastornos Menstruales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 1234 5678",
+      "Contacto": "carmen.lopez@ginecologiamexico.com"
+    },
+    {
+      "Nombre del Médico": "Dr. Pedro Sánchez",
+      "Impresion diagnostica": "Trastornos Menstruales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 2345 6789",
+      "Contacto": "pedro.sanchez@clinicaginecologica.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Ana Ramírez",
+      "Impresion diagnostica": "Trastornos Menstruales",
+      "Especialidad": "Medicina General",
+      "Teléfono": "55 3456 7890",
+      "Contacto": "ana.ramirez@ginecohealth.mx"
+    },
+    {
+      "Nombre del Médico": "Dr. Luis Morales",
+      "Impresion diagnostica": "Trastornos Menstruales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 4567 8901",
+      "Contacto": "luis.morales@ginecologiacentro.mx"
+    },
+    {
+      "Nombre del Médico": "Dra. Patricia Torres",
+      "Impresion diagnostica": "Trastornos Menstruales",
+      "Especialidad": "Ginecología",
+      "Teléfono": "55 5678 9012",
+      "Contacto": "patricia.torres@menstrualcare.mx"
+    }
+  ]  

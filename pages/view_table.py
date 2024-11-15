@@ -4,6 +4,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, DataReturnMode
 import os
 import datetime
+import unicodedata
 
 def show_table_page():
     st.title("Tabla de Pacientes")
@@ -58,9 +59,9 @@ def show_table_page():
                     st.success("Base de datos reseteada exitosamente.")
                     st.session_state.confirm_reset = False
                     st.rerun()
-            with confirm_reset_cols[1]:
-                if st.button("Cancelar"):
-                    st.session_state.confirm_reset = False
+                with confirm_reset_cols[1]:
+                    if st.button("Cancelar"):
+                        st.session_state.confirm_reset = False
         else:
             if st.button("Resetear Base de Datos"):
                 st.session_state.confirm_reset = True
@@ -127,7 +128,7 @@ def show_table_page():
         curp_filter = st.text_input("Filtrar por CURP")
         medico_filter = st.multiselect("Filtrar por Médico Solicitante", options=df['Medico Solicitante'].dropna().unique())
         procedimiento_filter = st.multiselect("Filtrar por Procedimiento", options=df['Procedimiento'].dropna().unique())
-        impresion_filter = st.multiselect("Filtrar por Impresión Diagnóstica", options=df['Impresion Diagnostica'].dropna().unique())
+        impresion_filter = st.multiselect("Filtrar por Impresión Diagnóstica", options=df['Impresion diagnostica'].dropna().unique())
         # Rango de fechas de nacimiento
         fecha_nacimiento_min = st.date_input("Fecha de Nacimiento - Desde", value=fecha_nacimiento_min_value)
         fecha_nacimiento_max = st.date_input("Fecha de Nacimiento - Hasta", value=fecha_nacimiento_max_value)
@@ -155,7 +156,7 @@ def show_table_page():
         df = df[df['Procedimiento'].isin(procedimiento_filter)]
 
     if impresion_filter:
-        df = df[df['Impresion Diagnostica'].isin(impresion_filter)]
+        df = df[df['Impresion diagnostica'].isin(impresion_filter)]
 
     if fecha_nacimiento_min and fecha_nacimiento_max:
         df = df[(df['Fecha de Nacimiento'] >= pd.to_datetime(fecha_nacimiento_min)) & (df['Fecha de Nacimiento'] <= pd.to_datetime(fecha_nacimiento_max))]
@@ -164,7 +165,7 @@ def show_table_page():
         df = df[(df['Fecha y Hora'] >= pd.to_datetime(fecha_estudio_min)) & (df['Fecha y Hora'] <= pd.to_datetime(fecha_estudio_max))]
 
     # DataFrame básico para mostrar en la tabla
-    df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion Diagnostica']]
+    df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion diagnostica']]
 
     # Mostrar el número de registros en la tabla después de aplicar los filtros
     st.write(f"Número de registros en la tabla: {len(df_basic)}")
@@ -222,7 +223,7 @@ def show_table_page():
                 'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
                 'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante',
                 'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion',
-                'Tecnica', 'Efectuado', 'Dictado', 'Numero de Acceso', 'Hallazgos', 'Impresion Diagnostica', 'Religion'
+                'Tecnica', 'Efectuado', 'Dictado', 'Numero de acceso', 'Hallazgos', 'Impresion diagnostica', 'Religion'
             ]
             for campo in campos:
                 valor = selected_patient_full.get(campo, '')
@@ -240,6 +241,60 @@ def show_table_page():
             st.subheader("Seleccione un paciente para ver los detalles")
             if 'selected_patient_full' in st.session_state:
                 del st.session_state.selected_patient_full
+
+    # Mostrar los doctores asociados debajo de la tabla en la columna 1
+    with col1:
+        st.subheader("Doctores Asociados")
+
+        if not selected_rows.empty:
+            # Obtener la impresión diagnóstica del paciente seleccionado
+            impresion_diagnostica_paciente = selected_patient_full['Impresion diagnostica']
+
+            if pd.notnull(impresion_diagnostica_paciente):
+                # Leer el archivo de doctores (ahora JSON)
+                doctores_path = "data/doctores.json"
+                if os.path.exists(doctores_path):
+                    try:
+                        # Leer el archivo JSON y convertirlo en un DataFrame
+                        doctores_df = pd.read_json(doctores_path, encoding='utf-8')
+
+                        # Función para normalizar texto (quitar acentos y pasar a minúsculas)
+                        def normalizar(texto):
+                            texto = str(texto).lower()
+                            texto = ''.join(
+                                c for c in unicodedata.normalize('NFD', texto)
+                                if unicodedata.category(c) != 'Mn'
+                            )
+                            return texto
+
+                        # Normalizar la impresión diagnóstica del paciente
+                        impresion_paciente_normalizada = normalizar(impresion_diagnostica_paciente)
+
+                        # Normalizar la impresión diagnóstica de los doctores
+                        doctores_df['Impresion diagnostica normalizada'] = doctores_df['Impresion diagnostica'].apply(normalizar)
+
+                        # Filtrar los doctores que coinciden con la impresión diagnóstica del paciente
+                        doctores_filtrados = doctores_df[doctores_df['Impresion diagnostica normalizada'] == impresion_paciente_normalizada]
+
+                        if not doctores_filtrados.empty:
+                            # Mostrar la información de los doctores como tarjetas de presentación
+                            for idx, doctor in doctores_filtrados.iterrows():
+                                st.markdown("---")
+                                st.markdown(f"**Nombre del Médico:** {doctor['Nombre del Médico']}")
+                                st.markdown(f"**Especialidad:** {doctor['Especialidad']}")
+                                st.markdown(f"**Teléfono:** {doctor['Teléfono']}")
+                                st.markdown(f"**Contacto:** {doctor['Contacto']}")
+                        else:
+                            st.info("No se encontraron doctores asociados a esta impresión diagnóstica.")
+                    except Exception as e:
+                        st.error("Error al leer el archivo de doctores.")
+                        st.error(str(e))
+                else:
+                    st.warning("El archivo de doctores no se encontró.")
+            else:
+                st.info("El paciente seleccionado no tiene una impresión diagnóstica.")
+        else:
+            st.info("Seleccione un paciente para ver los doctores asociados.")
 
 def delete_selected_record(selected_patient):
     # Leer el DataFrame original sin parsear las fechas
@@ -288,9 +343,9 @@ def reset_database():
         'Tecnica',
         'Efectuado',
         'Dictado',
-        'Numero de Acceso',
+        'Numero de acceso',
         'Hallazgos',
-        'Impresion Diagnostica',
+        'Impresion diagnostica',
         'Religion'
     ]
     df_empty = pd.DataFrame(columns=columns)
