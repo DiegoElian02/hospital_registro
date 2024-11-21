@@ -45,14 +45,15 @@ def show_qr_scanner_page():
 
         if vertices_array is not None:
             if data:
-                # Asumiendo que el código QR contiene la información del paciente en formato JSON
+                # Ahora el QR solo contiene el CURP en formato JSON
                 try:
-                    patient_data = json.loads(data)
+                    # Decodificar el JSON obtenido del QR
+                    qr_data = json.loads(data)
 
                     st.success("Código QR escaneado exitosamente.")
 
                     # Obtener el CURP del paciente
-                    patient_curp = patient_data.get('CURP', None)
+                    patient_curp = qr_data.get('CURP', None)
 
                     if patient_curp is None:
                         st.error("El código QR no contiene el campo 'CURP'.")
@@ -63,10 +64,18 @@ def show_qr_scanner_page():
                     if os.path.exists(file_path):
                         df_patients = pd.read_csv(file_path, encoding='utf-8')
                     else:
-                        df_patients = pd.DataFrame()
+                        st.error("La base de datos de pacientes no existe.")
+                        return
 
                     # Buscar el paciente en la base de datos
                     patient_records = df_patients[df_patients['CURP'] == patient_curp]
+
+                    if patient_records.empty:
+                        st.warning("Paciente no encontrado en la base de datos. Puedes registrar una nueva consulta.")
+                        return
+
+                    # Obtener los datos del paciente
+                    patient_data = patient_records.iloc[-1].to_dict()
 
                     # Crear dos columnas
                     col1, col2 = st.columns([1, 1])
@@ -78,7 +87,7 @@ def show_qr_scanner_page():
                     with col1:
                         st.subheader("Información del Paciente")
 
-                        # Mostrar los detalles del paciente escaneado
+                        # Mostrar los detalles del paciente obtenido de la base de datos
                         campos_paciente = [
                             'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
                             'Entidad Federativa', 'Domicilio', 'Telefono', 'Religion'
@@ -103,7 +112,7 @@ def show_qr_scanner_page():
                             dictado = st.text_input("Dictado")
                             num_acceso = st.text_input("Número de Acceso")
                             hallazgos = st.text_area("Hallazgos")
-                            impresion_diagnostica = st.text_area("Impresión diagnostica")
+                            impresion_diagnostica = st.text_area("Impresión diagnóstica")
 
                             submit_button = st.form_submit_button(label='Registrar Consulta')
 
@@ -129,84 +138,79 @@ def show_qr_scanner_page():
                             # Guardar el registro en el archivo CSV
                             save_consultation(registro_completo)
                             st.success("Consulta registrada exitosamente en la base de datos.")
-                            st.rerun()
+                            st.experimental_rerun()
 
-                    # Si el paciente existe, mostrar sus datos y doctores asociados en la columna derecha
-                    if not patient_records.empty:
-                        st.info("Paciente encontrado en la base de datos.")
+                    # Mostrar el historial y los doctores asociados en la columna derecha
+                    with col2:
+                        st.subheader("Historial del Paciente")
 
-                        with col2:
-                            st.subheader("Historial del Paciente")
+                        # Actualizar los registros del paciente después de guardar una nueva consulta
+                        if registro_completo is not None:
+                            # Volver a cargar df_patients y patient_records
+                            df_patients = pd.read_csv(file_path, encoding='utf-8')
+                            patient_records = df_patients[df_patients['CURP'] == patient_curp]
 
-                            # Actualizar los registros del paciente después de guardar una nueva consulta
-                            if registro_completo is not None:
-                                # Volver a cargar df_patients y patient_records
-                                df_patients = pd.read_csv(file_path, encoding='utf-8')
-                                patient_records = df_patients[df_patients['CURP'] == patient_curp]
+                        # Mostrar el historial de consultas del paciente
+                        historial = patient_records.copy()
 
-                            # Mostrar el historial de consultas del paciente
-                            historial = patient_records.copy()
+                        # Convertir fechas para visualización
+                        for campo_fecha in ['Fecha de Nacimiento', 'Fecha y Hora']:
+                            if campo_fecha in historial.columns:
+                                historial[campo_fecha] = pd.to_datetime(historial[campo_fecha], dayfirst=True, errors='coerce')
+                                historial[campo_fecha] = historial[campo_fecha].dt.strftime('%d/%m/%Y')
 
-                            # Convertir fechas para visualización
-                            for campo_fecha in ['Fecha de Nacimiento', 'Fecha y Hora']:
-                                if campo_fecha in historial.columns:
-                                    historial[campo_fecha] = pd.to_datetime(historial[campo_fecha], dayfirst=True, errors='coerce')
-                                    historial[campo_fecha] = historial[campo_fecha].dt.strftime('%d/%m/%Y')
+                        # Mostrar el historial en una tabla
+                        st.dataframe(historial)
 
-                            # Mostrar el historial en una tabla
-                            st.dataframe(historial)
+                        # Mostrar los doctores asociados
+                        st.subheader("Doctores Asociados")
 
-                            # Mostrar los doctores asociados
-                            st.subheader("Doctores Asociados")
+                        # Obtener la última impresión diagnóstica del historial
+                        impresion_diagnostica_paciente = patient_records.iloc[-1].get('Impresion diagnostica', '')
 
-                            # Obtener la última impresión diagnóstica del historial
-                            impresion_diagnostica_paciente = patient_records.iloc[-1].get('Impresion diagnostica', '')
+                        if impresion_diagnostica_paciente:
+                            # Leer el archivo de doctores
+                            doctores_path = "data/doctores.json"
+                            if os.path.exists(doctores_path):
+                                try:
+                                    # Leer el archivo JSON y convertirlo en un DataFrame
+                                    doctores_df = pd.read_json(doctores_path, encoding='utf-8')
 
-                            if impresion_diagnostica_paciente:
-                                # Leer el archivo de doctores (ahora JSON)
-                                doctores_path = "data/doctores.json"
-                                if os.path.exists(doctores_path):
-                                    try:
-                                        # Leer el archivo JSON y convertirlo en un DataFrame
-                                        doctores_df = pd.read_json(doctores_path, encoding='utf-8')
+                                    # Función para normalizar texto (quitar acentos y pasar a minúsculas)
+                                    def normalizar(texto):
+                                        texto = str(texto).lower()
+                                        texto = ''.join(
+                                            c for c in unicodedata.normalize('NFD', texto)
+                                            if unicodedata.category(c) != 'Mn'
+                                        )
+                                        return texto
 
-                                        # Función para normalizar texto (quitar acentos y pasar a minúsculas)
-                                        def normalizar(texto):
-                                            texto = str(texto).lower()
-                                            texto = ''.join(
-                                                c for c in unicodedata.normalize('NFD', texto)
-                                                if unicodedata.category(c) != 'Mn'
-                                            )
-                                            return texto
+                                    # Normalizar la impresión diagnóstica del paciente
+                                    impresion_paciente_normalizada = normalizar(impresion_diagnostica_paciente)
 
-                                        # Normalizar la impresión diagnóstica del paciente
-                                        impresion_paciente_normalizada = normalizar(impresion_diagnostica_paciente)
+                                    # Normalizar la impresión diagnóstica de los doctores
+                                    doctores_df['Impresion diagnostica normalizada'] = doctores_df['Impresion diagnostica'].apply(normalizar)
 
-                                        # Normalizar la impresión diagnóstica de los doctores
-                                        doctores_df['Impresion diagnostica normalizada'] = doctores_df['Impresion diagnostica'].apply(normalizar)
+                                    # Filtrar los doctores que coinciden con la impresión diagnóstica del paciente
+                                    doctores_filtrados = doctores_df[doctores_df['Impresion diagnostica normalizada'] == impresion_paciente_normalizada]
 
-                                        # Filtrar los doctores que coinciden con la impresión diagnóstica del paciente
-                                        doctores_filtrados = doctores_df[doctores_df['Impresion diagnostica normalizada'] == impresion_paciente_normalizada]
-
-                                        if not doctores_filtrados.empty:
-                                            # Mostrar la información de los doctores como tarjetas de presentación
-                                            for idx, doctor in doctores_filtrados.iterrows():
-                                                st.markdown("---")
-                                                st.markdown(f"**Nombre del Médico:** {doctor['Nombre del Médico']}")
-                                                st.markdown(f"**Especialidad:** {doctor['Especialidad']}")
-                                                st.markdown(f"**Teléfono:** {doctor['Teléfono']}")
-                                                st.markdown(f"**Contacto:** {doctor['Contacto']}")
-                                        else:
-                                            st.info("No se encontraron doctores asociados a esta impresión diagnóstica.")
-                                    except Exception as e:
-                                        st.error("Error al leer el archivo de doctores.")
-                                        st.error(str(e))
-                                else:
-                                    st.warning("El archivo de doctores no se encontró.")
+                                    if not doctores_filtrados.empty:
+                                        # Mostrar la información de los doctores como tarjetas de presentación
+                                        for idx, doctor in doctores_filtrados.iterrows():
+                                            st.markdown("---")
+                                            st.markdown(f"**Nombre del Médico:** {doctor['Nombre del Médico']}")
+                                            st.markdown(f"**Especialidad:** {doctor['Especialidad']}")
+                                            st.markdown(f"**Teléfono:** {doctor['Teléfono']}")
+                                            st.markdown(f"**Contacto:** {doctor['Contacto']}")
+                                    else:
+                                        st.info("No se encontraron doctores asociados a esta impresión diagnóstica.")
+                                except Exception as e:
+                                    st.error("Error al leer el archivo de doctores.")
+                                    st.error(str(e))
                             else:
-                                st.info("El paciente no tiene una impresión diagnóstica registrada.")
-                    else:
-                        st.warning("Paciente no encontrado en la base de datos. Puedes registrar una nueva consulta.")
+                                st.warning("El archivo de doctores no se encontró.")
+                        else:
+                            st.info("El paciente no tiene una impresión diagnóstica registrada.")
                 except json.JSONDecodeError as e:
                     st.error("Error al decodificar la información del código QR.")
                     st.error(str(e))
@@ -243,4 +247,3 @@ def save_consultation(consultation_data):
 
     # Guardar el DataFrame actualizado en el archivo CSV
     df.to_csv(file_path, index=False, encoding='utf-8')
-    
