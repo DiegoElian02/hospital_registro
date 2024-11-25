@@ -6,19 +6,32 @@ import datetime
 from src.authentication import authenticate_user  # Asegúrate de tener esta función
 
 def show_register_page(user_role):
-    st.title("Registrar Paciente")
+    # Crear columnas para posicionar el logo y el título
+    col1, col2 = st.columns([8, 1])
 
-    header_cols = st.columns([8, 1])
-    with header_cols[1]:
+    with col1:
+        st.title("Registrar Paciente")
+
+    with col2:
+        # Ruta a la imagen del logo
+        logo_path = os.path.join('images', 'logo.jpg')
+        # Mostrar la imagen del logo
+        st.image(logo_path, width=220)
+
+    # Colocar los botones en una fila
+    button_cols = st.columns([1, 6, 1])
+
+    with button_cols[0]:
+        if st.button("Escanear QR"):
+            st.session_state.page = 'Escanear QR'
+            st.rerun()
+
+    with button_cols[2]:
         if st.button("Cerrar Sesión"):
             st.session_state.authenticated = False
             st.session_state.user_role = None
             st.session_state.page = 'Registrar Paciente'
             st.rerun()
-
-    if st.button("Escanear QR"):
-        st.session_state.page = 'Escanear QR'
-        st.rerun()
 
     st.subheader("Datos de Identificación Personal")
     col1, col2 = st.columns(2)
@@ -110,12 +123,16 @@ def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_na
                        procedimiento, motivo_estudio, comparacion, tecnica, efectuado, dictado,
                        num_acceso, hallazgos, impresion_diagnostica):
 
+    # Formatear la fecha de nacimiento al formato deseado
+    fecha_nacimiento_formateada = fecha_nacimiento.strftime('%d/%m/%Y %I:%M:%S %p')
+    fecha_hora_formateada = fecha_hora.strftime('%d/%m/%Y %I:%M:%S %p')
+
     new_patient = {
         'Nombre': nombre,
         'Primer Apellido': primer_apellido,
         'Segundo Apellido': segundo_apellido,
         'CURP': curp,
-        'Fecha de Nacimiento': fecha_nacimiento,
+        'Fecha de Nacimiento': fecha_nacimiento_formateada,
         'Sexo': sexo,
         'Entidad Federativa': entidad_federativa,
         'Domicilio': domicilio,
@@ -127,16 +144,16 @@ def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_na
         'Medico Solicitante': medico_solicitante,
         'Episodio': episodio,
         'Ubicacion': ubicacion,
-        'Fecha y Hora': fecha_hora,
+        'Fecha y Hora': fecha_hora_formateada,
         'Procedimiento': procedimiento,
         'Motivo del Estudio': motivo_estudio,
         'Comparacion': comparacion,
         'Tecnica': tecnica,
         'Efectuado': efectuado,
         'Dictado': dictado,
-        'Numero de Acceso': num_acceso,
+        'Numero de acceso': num_acceso,
         'Hallazgos': hallazgos,
-        'Impresion Diagnostica': impresion_diagnostica
+        'Impresion diagnostica': impresion_diagnostica
     }
     save_patient(new_patient)
 
@@ -166,9 +183,9 @@ def save_patient(patient_data):
         'Tecnica',
         'Efectuado',
         'Dictado',
-        'Numero de Acceso',
+        'Numero de acceso',
         'Hallazgos',
-        'Impresion Diagnostica'
+        'Impresion diagnostica'
     ]
 
     if os.path.exists(file_path):

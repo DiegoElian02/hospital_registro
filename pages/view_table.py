@@ -73,9 +73,12 @@ def show_table_page():
             # Leer el CSV sin parsear las fechas
             df = pd.read_csv(file_path, encoding='utf-8')
 
-            # Parsear las fechas para visualización
+            # Eliminar la columna "Fecha y Hora" si existe
+            if 'Fecha y Hora' in df.columns:
+                df.drop(columns=['Fecha y Hora'], inplace=True)
+
+            # Parsear solo la fecha de nacimiento para visualización
             df['Fecha de Nacimiento'] = pd.to_datetime(df['Fecha de Nacimiento'], dayfirst=True, errors='coerce')
-            df['Fecha y Hora'] = pd.to_datetime(df['Fecha y Hora'], dayfirst=True, errors='coerce')
         except Exception as e:
             st.error("Error al leer la base de datos.")
             st.error(str(e))
@@ -102,8 +105,6 @@ def show_table_page():
     # Manejar valores nulos en fechas
     fecha_nacimiento_min_value = df['Fecha de Nacimiento'].min()
     fecha_nacimiento_max_value = df['Fecha de Nacimiento'].max()
-    fecha_estudio_min_value = df['Fecha y Hora'].min()
-    fecha_estudio_max_value = df['Fecha y Hora'].max()
 
     if pd.isnull(fecha_nacimiento_min_value):
         fecha_nacimiento_min_value = datetime.date(1900, 1, 1)
@@ -114,16 +115,6 @@ def show_table_page():
         fecha_nacimiento_max_value = datetime.date.today()
     else:
         fecha_nacimiento_max_value = fecha_nacimiento_max_value.date()
-
-    if pd.isnull(fecha_estudio_min_value):
-        fecha_estudio_min_value = datetime.date(1900, 1, 1)
-    else:
-        fecha_estudio_min_value = fecha_estudio_min_value.date()
-
-    if pd.isnull(fecha_estudio_max_value):
-        fecha_estudio_max_value = datetime.date.today()
-    else:
-        fecha_estudio_max_value = fecha_estudio_max_value.date()
 
     # Filtros
     with st.expander("Filtros de Búsqueda"):
@@ -139,9 +130,6 @@ def show_table_page():
         # Rango de fechas de nacimiento
         fecha_nacimiento_min = st.date_input("Fecha de Nacimiento - Desde", value=fecha_nacimiento_min_value)
         fecha_nacimiento_max = st.date_input("Fecha de Nacimiento - Hasta", value=fecha_nacimiento_max_value)
-        # Rango de fechas de estudios
-        fecha_estudio_min = st.date_input("Fecha del Estudio - Desde", value=fecha_estudio_min_value)
-        fecha_estudio_max = st.date_input("Fecha del Estudio - Hasta", value=fecha_estudio_max_value)
 
     # Aplicar los filtros
     if nombre_filter:
@@ -174,9 +162,6 @@ def show_table_page():
     if fecha_nacimiento_min and fecha_nacimiento_max:
         df = df[(df['Fecha de Nacimiento'] >= pd.to_datetime(fecha_nacimiento_min)) & (df['Fecha de Nacimiento'] <= pd.to_datetime(fecha_nacimiento_max))]
 
-    if fecha_estudio_min and fecha_estudio_max:
-        df = df[(df['Fecha y Hora'] >= pd.to_datetime(fecha_estudio_min)) & (df['Fecha y Hora'] <= pd.to_datetime(fecha_estudio_max))]
-
     # DataFrame básico para mostrar en la tabla
     df_basic = df[['N°', 'Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Tipo de Sangre', 'Impresion diagnostica']]
 
@@ -192,7 +177,7 @@ def show_table_page():
         # Configurar AgGrid
         gb = GridOptionsBuilder.from_dataframe(df_basic)
         gb.configure_selection(selection_mode='single', use_checkbox=False)
-        # Configurar formato de fecha para las columnas
+        # Configurar formato de fecha solo para 'Fecha de Nacimiento'
         gb.configure_column('Fecha de Nacimiento', type=['dateColumnFilter', 'customDateTimeFormat'], custom_format_string='dd/MM/yyyy', pivot=True)
         gb.configure_column('N°', pinned='left', width=70)
 
@@ -232,17 +217,17 @@ def show_table_page():
 
             st.subheader(f"Detalles de {selected_patient_full['Paciente']}")
 
-            # Mostrar los detalles del paciente, incluyendo los campos faltantes
+            # Mostrar los detalles del paciente, excluyendo "Fecha y Hora"
             campos = [
                 'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
                 'Entidad Federativa', 'Domicilio', 'Telefono', 'Tipo de Sangre', 'Alergias', 'Religion',
-                'Numero de Expediente', 'Medico Solicitante', 'Episodio', 'Ubicacion', 'Fecha y Hora',
+                'Numero de Expediente', 'Medico Solicitante', 'Episodio', 'Ubicacion',
                 'Procedimiento', 'Motivo del Estudio', 'Comparacion', 'Tecnica', 'Efectuado', 'Dictado',
                 'Numero de Acceso', 'Hallazgos', 'Impresion diagnostica'
             ]
             for campo in campos:
                 valor = selected_patient_full.get(campo, '')
-                if campo in ['Fecha de Nacimiento', 'Fecha y Hora']:
+                if campo == 'Fecha de Nacimiento':
                     if pd.notnull(valor):
                         valor = pd.to_datetime(valor, dayfirst=True, errors='coerce')
                         if pd.notnull(valor):
@@ -315,6 +300,10 @@ def delete_selected_record(selected_patient):
     # Leer el DataFrame original sin parsear las fechas
     try:
         df = pd.read_csv("data/patients.csv", encoding='utf-8')
+
+        # Eliminar la columna "Fecha y Hora" si existe
+        if 'Fecha y Hora' in df.columns:
+            df.drop(columns=['Fecha y Hora'], inplace=True)
     except Exception as e:
         st.error("Error al leer la base de datos.")
         st.error(str(e))
@@ -331,7 +320,7 @@ def delete_selected_record(selected_patient):
         st.error(str(e))
 
 def reset_database():
-    # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias
+    # Eliminar el archivo CSV y crear uno nuevo vacío con las columnas necesarias, excluyendo 'Fecha y Hora'
     file_path = "data/patients.csv"
     if os.path.exists(file_path):
         os.remove(file_path)
@@ -354,7 +343,6 @@ def reset_database():
         'Medico Solicitante',
         'Episodio',
         'Ubicacion',
-        'Fecha y Hora',
         'Procedimiento',
         'Motivo del Estudio',
         'Comparacion',
@@ -381,9 +369,16 @@ def append_to_database(new_data_file):
             # Leer el archivo cargado sin parsear las fechas
             new_data = pd.read_csv(new_data_file, encoding='utf-8')
 
+            # Eliminar la columna "Fecha y Hora" si existe en los nuevos datos
+            if 'Fecha y Hora' in new_data.columns:
+                new_data.drop(columns=['Fecha y Hora'], inplace=True)
+
             # Combinar con la base de datos existente o crear uno nuevo si no existe
             if os.path.exists(file_path):
                 df = pd.read_csv(file_path, encoding='utf-8')
+                # Eliminar la columna "Fecha y Hora" si existe
+                if 'Fecha y Hora' in df.columns:
+                    df.drop(columns=['Fecha y Hora'], inplace=True)
                 df = pd.concat([df, new_data], ignore_index=True)
             else:
                 df = new_data
