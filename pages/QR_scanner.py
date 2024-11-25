@@ -45,19 +45,13 @@ def show_qr_scanner_page():
 
         if vertices_array is not None:
             if data:
-                # Ahora el QR solo contiene el CURP en formato JSON
+                # Ahora el QR contiene el CURP cifrado
                 try:
-                    # Decodificar el JSON obtenido del QR
-                    qr_data = json.loads(data)
+                    # Desencriptar el CURP usando el cifrado César
+                    encrypted_curp = data
+                    patient_curp = decrypt_curp(encrypted_curp)
 
-                    st.success("Código QR escaneado exitosamente.")
-
-                    # Obtener el CURP del paciente
-                    patient_curp = qr_data.get('CURP', None)
-
-                    if patient_curp is None:
-                        st.error("El código QR no contiene el campo 'CURP'.")
-                        return
+                    st.success("Código QR escaneado y CURP descifrado exitosamente.")
 
                     # Leer el archivo patients.csv y buscar el paciente por CURP
                     file_path = "data/patients.csv"
@@ -90,7 +84,7 @@ def show_qr_scanner_page():
                         # Mostrar los detalles del paciente obtenido de la base de datos
                         campos_paciente = [
                             'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
-                            'Entidad Federativa', 'Domicilio', 'Telefono', 'Religion'
+                            'Entidad Federativa', 'Domicilio', 'Telefono', 'Religion', 'Tipo de Sangre', 'Alergias'
                         ]
                         for campo in campos_paciente:
                             st.write(f"**{campo}:** {patient_data.get(campo, '')}")
@@ -112,7 +106,7 @@ def show_qr_scanner_page():
                             dictado = st.text_input("Dictado")
                             num_acceso = st.text_input("Número de Acceso")
                             hallazgos = st.text_area("Hallazgos")
-                            impresion_diagnostica = st.text_area("Impresión diagnóstica")
+                            impresion_diagnostica = st.text_area("Impresion diagnostica")
 
                             submit_button = st.form_submit_button(label='Registrar Consulta')
 
@@ -132,8 +126,7 @@ def show_qr_scanner_page():
                                                  'Dictado': dictado,
                                                  'Numero de Acceso': num_acceso,
                                                  'Hallazgos': hallazgos,
-                                                 'Impresion diagnostica': impresion_diagnostica,
-                                                 'Religion': patient_data.get('Religion', '')}
+                                                 'Impresion diagnostica': impresion_diagnostica}
 
                             # Guardar el registro en el archivo CSV
                             save_consultation(registro_completo)
@@ -195,7 +188,6 @@ def show_qr_scanner_page():
                                     doctores_filtrados = doctores_df[doctores_df['Impresion diagnostica normalizada'] == impresion_paciente_normalizada]
 
                                     if not doctores_filtrados.empty:
-                                        # Mostrar la información de los doctores como tarjetas de presentación
                                         for idx, doctor in doctores_filtrados.iterrows():
                                             st.markdown("---")
                                             st.markdown(f"**Nombre del Médico:** {doctor['Nombre del Médico']}")
@@ -211,11 +203,8 @@ def show_qr_scanner_page():
                                 st.warning("El archivo de doctores no se encontró.")
                         else:
                             st.info("El paciente no tiene una impresión diagnóstica registrada.")
-                except json.JSONDecodeError as e:
-                    st.error("Error al decodificar la información del código QR.")
-                    st.error(str(e))
                 except Exception as e:
-                    st.error("Ocurrió un error inesperado.")
+                    st.error("Error al procesar el código QR.")
                     st.error(str(e))
             else:
                 st.warning("No se pudo decodificar el código QR. Asegúrate de que contiene datos válidos.")
@@ -227,9 +216,10 @@ def save_consultation(consultation_data):
     # Definir las columnas
     all_fields = [
         'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
-        'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante',
-        'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion',
-        'Tecnica', 'Efectuado', 'Dictado', 'Numero de Acceso', 'Hallazgos', 'Impresion diagnostica', 'Religion'
+        'Entidad Federativa', 'Domicilio', 'Telefono', 'Religion', 'Tipo de Sangre', 'Alergias',
+        'Numero de Expediente', 'Medico Solicitante', 'Episodio', 'Ubicacion', 'Fecha y Hora',
+        'Procedimiento', 'Motivo del Estudio', 'Comparacion', 'Tecnica', 'Efectuado', 'Dictado',
+        'Numero de Acceso', 'Hallazgos', 'Impresion diagnostica'
     ]
     if os.path.exists(file_path):
         df = pd.read_csv(file_path, encoding='utf-8')
@@ -247,3 +237,16 @@ def save_consultation(consultation_data):
 
     # Guardar el DataFrame actualizado en el archivo CSV
     df.to_csv(file_path, index=False, encoding='utf-8')
+
+def decrypt_curp(encrypted_curp, shift=3):
+    decrypted = ''
+    for char in encrypted_curp:
+        if char.isupper():
+            decrypted += chr((ord(char) - shift - 65) % 26 + 65)
+        elif char.islower():
+            decrypted += chr((ord(char) - shift - 97) % 26 + 97)
+        elif char.isdigit():
+            decrypted += chr((ord(char) - shift - 48) % 10 + 48)
+        else:
+            decrypted += char  # No modifica caracteres especiales
+    return decrypted

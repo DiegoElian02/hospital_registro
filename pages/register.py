@@ -8,7 +8,6 @@ from src.authentication import authenticate_user  # Asegúrate de tener esta fun
 def show_register_page(user_role):
     st.title("Registrar Paciente")
 
-    # Crear columnas para posicionar el botón en la derecha
     header_cols = st.columns([8, 1])
     with header_cols[1]:
         if st.button("Cerrar Sesión"):
@@ -17,35 +16,34 @@ def show_register_page(user_role):
             st.session_state.page = 'Registrar Paciente'
             st.rerun()
 
-    # Botón para cambiar a la página de escaneo QR
     if st.button("Escanear QR"):
         st.session_state.page = 'Escanear QR'
         st.rerun()
 
-    # Reorganizamos la interfaz: Datos de identificación primero
     st.subheader("Datos de Identificación Personal")
     col1, col2 = st.columns(2)
 
     with col1:
         nombre = st.text_input("Nombre(s)*", max_chars=50)
         primer_apellido = st.text_input("Primer Apellido*", max_chars=50)
-        segundo_apellido = st.text_input("Segundo Apellido", max_chars=50)  # Opcional
+        segundo_apellido = st.text_input("Segundo Apellido", max_chars=50)
         curp = st.text_input("CURP*", max_chars=18)
         if len(curp) != 18:
             st.error("CURP debe tener 18 caracteres.")
         fecha_min = datetime.date(1900, 1, 1)
         fecha_max = datetime.date.today()
         fecha_nacimiento = st.date_input("Fecha de Nacimiento*", value=datetime.date(2000, 1, 1), min_value=fecha_min, max_value=fecha_max)
+        tipo_sangre = st.selectbox("Tipo de Sangre*", ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
 
     with col2:
         sexo = st.selectbox("Sexo*", ["Masculino", "Femenino", "Otro"])
-        entidad_federativa = st.text_input("Entidad Federativa*")  # Estado de residencia
+        entidad_federativa = st.text_input("Entidad Federativa*")
         domicilio = st.text_input("Domicilio*", max_chars=100)
         telefono = st.text_input("Teléfono (Opcional)", max_chars=15)
-        religion = st.text_input("Religión")  # Nuevo campo de Religión
+        religion = st.text_input("Religión")
+        alergias = st.text_area("Alergias")
 
-    # Validación de campos obligatorios
-    if not nombre or not primer_apellido or not curp or not entidad_federativa or not domicilio:
+    if not nombre or not primer_apellido or not curp or not entidad_federativa or not domicilio or not tipo_sangre:
         st.error("Por favor, completa todos los campos obligatorios marcados con *.")
 
     st.subheader("Información Clínica")
@@ -73,18 +71,14 @@ def show_register_page(user_role):
         hallazgos = st.text_area("Hallazgos")
         impresion_diagnostica = st.text_area("Impresión Diagnóstica")
 
-    # Solo mostramos la barra de contraseña si es admin y se va a registrar el paciente
     if user_role == 'admin':
         st.subheader("Reautenticación Administrador")
         password = st.text_input("Ingresa tu contraseña nuevamente", type="password")
 
-    # Botón para registrar el paciente
     if st.button("Registrar"):
-        # Validación de campos obligatorios
-        if not nombre or not primer_apellido or len(curp) != 18:
+        if not nombre or not primer_apellido or len(curp) != 18 or not tipo_sangre:
             st.error("Por favor, completa correctamente los campos obligatorios.")
         else:
-            # Si es administrador, pedimos y verificamos la contraseña
             if user_role == 'admin':
                 if not password:
                     st.error("Por favor, ingresa tu contraseña para continuar.")
@@ -94,13 +88,12 @@ def show_register_page(user_role):
                     st.error("Contraseña incorrecta")
                     return
 
-            # Registro de paciente después de validación
             try:
                 registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
-                                   entidad_federativa, domicilio, telefono, religion, numero_expediente,
-                                   medico_solicitante, episodio, ubicacion, fecha_hora, procedimiento,
-                                   motivo_estudio, comparacion, tecnica, efectuado, dictado, num_acceso,
-                                   hallazgos, impresion_diagnostica)
+                                   entidad_federativa, domicilio, telefono, religion, tipo_sangre, alergias,
+                                   numero_expediente, medico_solicitante, episodio, ubicacion, fecha_hora,
+                                   procedimiento, motivo_estudio, comparacion, tecnica, efectuado, dictado,
+                                   num_acceso, hallazgos, impresion_diagnostica)
                 st.success("Paciente registrado exitosamente")
             except Exception as e:
                 st.error("Ocurrió un error al registrar el paciente.")
@@ -112,10 +105,10 @@ def show_register_page(user_role):
             st.rerun()
 
 def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_nacimiento, sexo,
-                       entidad_federativa, domicilio, telefono, religion, numero_expediente,
-                       medico_solicitante, episodio, ubicacion, fecha_hora, procedimiento,
-                       motivo_estudio, comparacion, tecnica, efectuado, dictado, num_acceso,
-                       hallazgos, impresion_diagnostica):
+                       entidad_federativa, domicilio, telefono, religion, tipo_sangre, alergias,
+                       numero_expediente, medico_solicitante, episodio, ubicacion, fecha_hora,
+                       procedimiento, motivo_estudio, comparacion, tecnica, efectuado, dictado,
+                       num_acceso, hallazgos, impresion_diagnostica):
 
     new_patient = {
         'Nombre': nombre,
@@ -127,7 +120,9 @@ def registrar_paciente(nombre, primer_apellido, segundo_apellido, curp, fecha_na
         'Entidad Federativa': entidad_federativa,
         'Domicilio': domicilio,
         'Telefono': telefono,
-        'Religion': religion,  # Campo de Religión agregado
+        'Religion': religion,
+        'Tipo de Sangre': tipo_sangre,
+        'Alergias': alergias,
         'Numero de Expediente': numero_expediente,
         'Medico Solicitante': medico_solicitante,
         'Episodio': episodio,
@@ -157,7 +152,9 @@ def save_patient(patient_data):
         'Entidad Federativa',
         'Domicilio',
         'Telefono',
-        'Religion',  # Nueva columna de Religión
+        'Religion',
+        'Tipo de Sangre',
+        'Alergias',
         'Numero de Expediente',
         'Medico Solicitante',
         'Episodio',
@@ -186,6 +183,9 @@ def save_patient(patient_data):
 
     # Crear un DataFrame a partir de los datos del paciente
     new_patient_df = pd.DataFrame([patient_data])
+
+    # Asegurar que las columnas estén en el orden correcto
+    new_patient_df = new_patient_df[columns]
 
     # Agregar la nueva fila al DataFrame existente
     df = pd.concat([df, new_patient_df], ignore_index=True)

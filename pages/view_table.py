@@ -91,6 +91,11 @@ def show_table_page():
     # Concatenar Nombre y Apellidos en el campo "Paciente"
     df['Paciente'] = df['Nombre'] + " " + df['Primer Apellido'] + " " + df['Segundo Apellido']
 
+    # Agregar número de fila al DataFrame
+    df.reset_index(inplace=True)
+    df.rename(columns={'index': 'N°'}, inplace=True)
+    df['N°'] += 1  # Para iniciar el conteo desde 1 en lugar de 0
+
     # Verificar el número de registros
     st.write(f"Número de registros en la base de datos: {len(df)}")
 
@@ -126,6 +131,8 @@ def show_table_page():
         sexo_filter = st.multiselect("Filtrar por Sexo", options=df['Sexo'].dropna().unique())
         expediente_filter = st.text_input("Filtrar por Número de Expediente")
         curp_filter = st.text_input("Filtrar por CURP")
+        tipo_sangre_filter = st.multiselect("Filtrar por Tipo de Sangre", options=df['Tipo de Sangre'].dropna().unique())
+        alergias_filter = st.text_input("Filtrar por Alergias")
         medico_filter = st.multiselect("Filtrar por Médico Solicitante", options=df['Medico Solicitante'].dropna().unique())
         procedimiento_filter = st.multiselect("Filtrar por Procedimiento", options=df['Procedimiento'].dropna().unique())
         impresion_filter = st.multiselect("Filtrar por Impresión Diagnóstica", options=df['Impresion diagnostica'].dropna().unique())
@@ -149,6 +156,12 @@ def show_table_page():
     if curp_filter:
         df = df[df['CURP'].str.contains(curp_filter, case=False, na=False)]
 
+    if tipo_sangre_filter:
+        df = df[df['Tipo de Sangre'].isin(tipo_sangre_filter)]
+
+    if alergias_filter:
+        df = df[df['Alergias'].str.contains(alergias_filter, case=False, na=False)]
+
     if medico_filter:
         df = df[df['Medico Solicitante'].isin(medico_filter)]
 
@@ -165,7 +178,7 @@ def show_table_page():
         df = df[(df['Fecha y Hora'] >= pd.to_datetime(fecha_estudio_min)) & (df['Fecha y Hora'] <= pd.to_datetime(fecha_estudio_max))]
 
     # DataFrame básico para mostrar en la tabla
-    df_basic = df[['Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Impresion diagnostica']]
+    df_basic = df[['N°', 'Paciente', 'Fecha de Nacimiento', 'Numero de Expediente', 'Sexo', 'Tipo de Sangre', 'Impresion diagnostica']]
 
     # Mostrar el número de registros en la tabla después de aplicar los filtros
     st.write(f"Número de registros en la tabla: {len(df_basic)}")
@@ -181,9 +194,10 @@ def show_table_page():
         gb.configure_selection(selection_mode='single', use_checkbox=False)
         # Configurar formato de fecha para las columnas
         gb.configure_column('Fecha de Nacimiento', type=['dateColumnFilter', 'customDateTimeFormat'], custom_format_string='dd/MM/yyyy', pivot=True)
+        gb.configure_column('N°', pinned='left', width=70)
 
-        # Configurar opciones adicionales
-        gb.configure_grid_options(domLayout='normal')
+        # Mostrar el número de fila
+        gb.configure_grid_options(rowSelection='single', suppressRowClickSelection=False, enableRowGroup=True, rowDragManaged=True)
         grid_options = gb.build()
 
         # Mostrar AgGrid
@@ -208,10 +222,10 @@ def show_table_page():
         # Verificar si hay filas seleccionadas
         if not selected_rows.empty:
             # Obtener el identificador único del paciente seleccionado
-            paciente_id = selected_rows.iloc[0]['Numero de Expediente']
+            paciente_id = selected_rows.iloc[0]['N°'] - 1  # Restar 1 porque el índice original empieza en 0
 
             # Buscar el registro completo del paciente en el DataFrame original
-            selected_patient_full = df[df['Numero de Expediente'] == paciente_id].iloc[0]
+            selected_patient_full = df[df['N°'] == selected_rows.iloc[0]['N°']].iloc[0]
 
             # Guardar en session_state para usar en la eliminación
             st.session_state.selected_patient_full = selected_patient_full
@@ -221,9 +235,10 @@ def show_table_page():
             # Mostrar los detalles del paciente, incluyendo los campos faltantes
             campos = [
                 'Nombre', 'Primer Apellido', 'Segundo Apellido', 'CURP', 'Fecha de Nacimiento', 'Sexo',
-                'Entidad Federativa', 'Domicilio', 'Telefono', 'Numero de Expediente', 'Medico Solicitante',
-                'Episodio', 'Ubicacion', 'Fecha y Hora', 'Procedimiento', 'Motivo del Estudio', 'Comparacion',
-                'Tecnica', 'Efectuado', 'Dictado', 'Numero de acceso', 'Hallazgos', 'Impresion diagnostica', 'Religion'
+                'Entidad Federativa', 'Domicilio', 'Telefono', 'Tipo de Sangre', 'Alergias', 'Religion',
+                'Numero de Expediente', 'Medico Solicitante', 'Episodio', 'Ubicacion', 'Fecha y Hora',
+                'Procedimiento', 'Motivo del Estudio', 'Comparacion', 'Tecnica', 'Efectuado', 'Dictado',
+                'Numero de Acceso', 'Hallazgos', 'Impresion diagnostica'
             ]
             for campo in campos:
                 valor = selected_patient_full.get(campo, '')
@@ -332,6 +347,9 @@ def reset_database():
         'Entidad Federativa',
         'Domicilio',
         'Telefono',
+        'Religion',
+        'Tipo de Sangre',
+        'Alergias',
         'Numero de Expediente',
         'Medico Solicitante',
         'Episodio',
@@ -343,10 +361,9 @@ def reset_database():
         'Tecnica',
         'Efectuado',
         'Dictado',
-        'Numero de acceso',
+        'Numero de Acceso',
         'Hallazgos',
-        'Impresion diagnostica',
-        'Religion'
+        'Impresion diagnostica'
     ]
     df_empty = pd.DataFrame(columns=columns)
     try:
